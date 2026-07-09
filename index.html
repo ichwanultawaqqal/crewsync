@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CrewSync — Ritme Terbang & Kesehatan Awak Kabin</title>
+<style>
+  :root {
+    --ink: #0a1628;
+    --ink-soft: #33445c;
+    --paper: #f5f3ee;
+    --paper-warm: #ece7dc;
+    --sky: #1b4b73;
+    --sky-bright: #2e7cb8;
+    --dawn: #e8a04b;
+    --dusk: #b5573f;
+    --night: #14213d;
+    --rest: #3a6b8c;
+    --line: #cfc7b8;
+    --alert-good: #4a7c59;
+    --alert-mid: #c98a2b;
+    --alert-bad: #b5573f;
+    --shadow: rgba(10,22,40,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
+  .sans { font-family: 'Helvetica Neue', 'Arial', sans-serif; }
+
+  /* ===== Header ===== */
+  header {
+    background: linear-gradient(160deg, var(--night) 0%, var(--sky) 100%);
+    color: var(--paper);
+    padding: 2.4rem 1.5rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::after {
+    content: "";
+    position: absolute;
+    top: -40%; right: -10%;
+    width: 340px; height: 340px;
+    background: radial-gradient(circle, rgba(232,160,75,0.35) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; }
+  .brandline {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--dawn);
+    margin-bottom: 0.6rem;
+  }
+  h1 {
+    font-size: clamp(1.9rem, 5vw, 2.9rem);
+    font-weight: normal;
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+  }
+  h1 em { font-style: italic; color: var(--dawn); }
+  .sub {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.92rem;
+    color: rgba(245,243,238,0.82);
+    margin-top: 0.8rem;
+    max-width: 560px;
+  }
+
+  /* ===== Layout ===== */
+  main { max-width: 940px; margin: 0 auto; padding: 1.5rem; }
+  .grid { display: grid; grid-template-columns: 1fr; gap: 1.4rem; }
+  @media (min-width: 820px) {
+    .grid { grid-template-columns: 340px 1fr; align-items: start; }
+    .panel-form { position: sticky; top: 1rem; }
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    box-shadow: 0 1px 3px var(--shadow);
+  }
+  .card-pad { padding: 1.3rem 1.3rem 1.5rem; }
+
+  .eyebrow {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.66rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--sky-bright);
+    margin-bottom: 0.9rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  label {
+    display: block;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.74rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--ink-soft);
+    margin: 0.9rem 0 0.3rem;
+    text-transform: uppercase;
+  }
+  label:first-of-type { margin-top: 0; }
+  .hint {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.68rem;
+    color: #8a8578;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  input, select {
+    width: 100%;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    font-size: 0.95rem;
+    font-family: 'SF Mono', Menlo, monospace;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  input:focus, select:focus {
+    outline: 2px solid var(--sky-bright);
+    outline-offset: 0;
+    background: #fff;
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+
+  .tzread {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.72rem;
+    margin-top: 0.35rem;
+    padding: 0.35rem 0.55rem;
+    border-radius: 2px;
+    letter-spacing: 0.01em;
+  }
+  .tzread.ok { background: #e4efe7; color: #3a6b47; }
+  .tzread.ok strong { color: #2f5a3a; }
+  .tzread.warn { background: #f6e6d8; color: #9c5a2b; }
+  .tzread.empty { display: none; }
+  .tzfallback { margin-top: 0.5rem; }
+
+  button.go {
+    width: 100%;
+    margin-top: 1.4rem;
+    padding: 0.85rem;
+    background: var(--dusk);
+    color: var(--paper);
+    border: none;
+    border-radius: 2px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  button.go:hover { background: #9c4635; }
+
+  /* ===== Results ===== */
+  #results { display: none; }
+  #results.show { display: block; }
+  .placeholder {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    color: #9a9484;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.88rem;
+  }
+  .placeholder .big { font-size: 2.4rem; margin-bottom: 0.6rem; }
+
+  .verdict {
+    padding: 1.2rem 1.3rem;
+    border-radius: 3px 3px 0 0;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .verdict.good { background: var(--alert-good); }
+  .verdict.mid  { background: var(--alert-mid); }
+  .verdict.bad  { background: var(--alert-bad); }
+  .verdict .score {
+    font-size: 2.6rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .verdict .vtext { font-family: 'Helvetica Neue', Arial, sans-serif; }
+  .verdict .vtext .vlabel {
+    font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.85;
+  }
+  .verdict .vtext .vmain { font-size: 1.05rem; font-weight: 700; margin-top: 0.15rem; }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid var(--line);
+  }
+  @media (min-width: 560px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
+  .metric {
+    padding: 1rem 0.9rem;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .metric:nth-child(2n) { border-right: none; }
+  @media (min-width: 560px) {
+    .metric:nth-child(2n) { border-right: 1px solid var(--line); }
+    .metric:nth-child(4n) { border-right: none; }
+  }
+  .metric .mlabel {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #8a8578; margin-bottom: 0.35rem;
+  }
+  .metric .mval {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 1.35rem; font-weight: 700; color: var(--ink);
+  }
+  .metric .mval .unit { font-size: 0.72rem; font-weight: 400; color: var(--ink-soft); }
+  .metric .mnote { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.66rem; color: #9a9484; margin-top: 0.2rem; }
+
+  .section-h {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em;
+    color: var(--ink); margin: 1.6rem 0 0.2rem;
+    display: flex; align-items: baseline; gap: 0.5rem;
+  }
+  .section-h .num {
+    font-family: 'SF Mono', monospace; font-size: 0.72rem; color: var(--sky-bright);
+    font-weight: 400;
+  }
+  .section-sub {
+    font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.76rem;
+    color: #8a8578; margin-bottom: 0.8rem;
+  }
+
+  /* Timeline */
+  .timeline { margin: 0.5rem 0 0.3rem; }
+  .tl-bar {
+    display: flex; height: 34px; border-radius: 2px; overflow: hidden;
+    border: 1px solid var(--line); font-size: 0;
+  }
+  .tl-seg { position: relative; }
+  .tl-labels {
+    display: flex; justify-content: space-between; margin-top: 0.3rem;
+    font-family: 'SF Mono', monospace; font-size: 0.62rem; color: #9a9484;
+  }
+  .tl-legend {
+    display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.7rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.7rem; color: var(--ink-soft);
+  }
+  .tl-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .swatch { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+
+  /* Recommendation blocks */
+  .rec {
+    display: flex; gap: 0.85rem; padding: 0.85rem 0;
+    border-bottom: 1px dashed var(--line);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .rec:last-child { border-bottom: none; }
+  .rec .ricon {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 1.2rem;
+    background: var(--paper-warm);
+  }
+  .rec .rbody { flex: 1; }
+  .rec .rtitle { font-size: 0.86rem; font-weight: 700; color: var(--ink); }
+  .rec .rtime {
+    font-family: 'SF Mono', monospace; font-size: 0.8rem; color: var(--dusk); font-weight: 700;
+  }
+  .rec .rdesc { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.15rem; }
+
+  /* Agenda kronologis */
+  .agenda { margin-top: 0.5rem; }
+  .ag-day {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--sky-bright); margin: 1.1rem 0 0.4rem; padding-bottom: 0.3rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .ag-day:first-child { margin-top: 0; }
+  .ag-item {
+    display: grid;
+    grid-template-columns: 60px 12px 30px 1fr;
+    gap: 0.55rem; align-items: start;
+    padding: 0.6rem 0.4rem; border-bottom: 1px dashed var(--line);
+    border-radius: 2px;
+  }
+  .ag-time { display: flex; flex-direction: column; }
+  .ag-local { font-family: 'SF Mono', Menlo, monospace; font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+  .ag-body  { font-family: 'SF Mono', Menlo, monospace; font-size: 0.58rem; color: #9a9484; margin-top: 0.05rem; }
+  .ag-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 0.35rem; flex-shrink: 0; }
+  .ag-icon { font-size: 1.1rem; text-align: center; }
+  .ag-content { min-width: 0; }
+  .ag-title { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 700; font-size: 0.82rem; color: var(--ink); }
+  .ag-desc  { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.73rem; color: var(--ink-soft); margin-top: 0.12rem; line-height: 1.4; }
+  .ag-item.ag-sleep { background: linear-gradient(90deg, rgba(58,107,140,0.09), transparent); }
+  .ag-item.ag-land, .ag-item.ag-depart { background: linear-gradient(90deg, rgba(181,87,63,0.10), transparent); }
+  .ag-item.ag-land .ag-title, .ag-item.ag-depart .ag-title { color: var(--dusk); }
+
+  .callout {
+    background: var(--paper-warm);
+    border-left: 3px solid var(--sky-bright);
+    padding: 0.8rem 1rem;
+    margin-top: 1rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    border-radius: 0 2px 2px 0;
+  }
+  .callout strong { color: var(--ink); }
+
+  .disclaimer {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.68rem; color: #9a9484; line-height: 1.5;
+    margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--line);
+  }
+  footer {
+    text-align: center; padding: 2rem 1.5rem 3rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.72rem; color: #9a9484;
+  }
+  .tag {
+    display: inline-block; font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 0.15rem 0.5rem; border-radius: 2px; margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+  .tag.east { background: #f3e0d5; color: var(--dusk); }
+  .tag.west { background: #d5e5f0; color: var(--sky); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brandline">CrewSync · Circadian & Health Model</div>
+    <h1>Terbang lintas zona,<br><em>tubuh tetap sinkron.</em></h1>
+    <p class="sub">Masukkan jadwal terbangmu. Model ini menghitung beban jet lag, memperkirakan kapan tubuhmu paling loyo, dan menyusun jendela tidur &amp; makan supaya rutinitas tidak berantakan.</p>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+    <!-- ===== FORM ===== -->
+    <div class="panel-form">
+      <div class="card card-pad">
+        <div class="eyebrow">Data Penerbangan</div>
+
+        <label>Kota Asal (home base)
+          <span class="hint">— tempat "jam tubuhmu" saat ini disetel</span>
+        </label>
+        <input id="origin" type="text" list="cityList" value="Balikpapan" placeholder="ketik nama kota…" autocomplete="off" oninput="resolveCity('origin')">
+        <div class="tzread empty" id="tzreadOrigin"></div>
+        <div class="tzfallback" id="tzfallbackOrigin" style="display:none">
+          <label>Zona tak dikenal — pilih manual</label>
+          <select id="tzOrigin"></select>
+        </div>
+
+        <label>Kota Tujuan</label>
+        <input id="dest" type="text" list="cityList" value="Doha" placeholder="ketik nama kota…" autocomplete="off" oninput="resolveCity('dest')">
+        <div class="tzread empty" id="tzreadDest"></div>
+        <div class="tzfallback" id="tzfallbackDest" style="display:none">
+          <label>Zona tak dikenal — pilih manual</label>
+          <select id="tzDest"></select>
+        </div>
+
+        <datalist id="cityList"></datalist>
+
+        <label>Jam Berangkat <span class="hint">(waktu lokal asal)</span></label>
+        <input id="depTime" type="time" value="23:30">
+
+        <label>Durasi Terbang <span class="hint">(jam)</span></label>
+        <input id="flightHrs" type="number" step="0.5" min="0" value="9.5">
+
+        <label>Lama di Tujuan <span class="hint">(jam, sampai terbang balik)</span></label>
+        <input id="groundHrs" type="number" step="1" min="0" value="48">
+
+        <label>Jam Bangun Biasa <span class="hint">(waktu home base)</span></label>
+        <input id="wakeTime" type="time" value="05:30">
+
+        <button class="go" onclick="run()">Hitung Rencana Ritme →</button>
+      </div>
+    </div>
+
+    <!-- ===== RESULTS ===== -->
+    <div>
+      <div class="placeholder card" id="placeholder">
+        <div class="big">🧭</div>
+        Isi data penerbangan di samping,<br>lalu tekan <strong>Hitung Rencana Ritme</strong>.
+      </div>
+
+      <div id="results">
+        <div class="card">
+          <div class="verdict" id="verdict">
+            <div class="score" id="vScore">—</div>
+            <div class="vtext">
+              <div class="vlabel">Beban Jet Lag</div>
+              <div class="vmain" id="vMain">—</div>
+            </div>
+          </div>
+          <div class="metrics" id="metrics"></div>
+        </div>
+
+        <div class="card card-pad" style="margin-top:1.4rem;">
+          <div class="section-h"><span class="num">01</span> Agenda: Mendarat → Terbang Lagi</div>
+          <div class="section-sub" id="agendaStrat"></div>
+          <div class="agenda" id="agenda"></div>
+        </div>
+
+        <div class="card card-pad" style="margin-top:1.4rem;">
+          <div class="section-h"><span class="num">02</span> Peta Ritme di Tujuan</div>
+          <div class="section-sub">Warna menunjukkan kondisi tubuhmu per jam (waktu lokal tujuan), berdasarkan jam tubuh yang belum sempat menyesuaikan.</div>
+          <div class="timeline" id="timeline"></div>
+        </div>
+
+        <div class="card card-pad" style="margin-top:1.4rem;">
+          <div class="section-h"><span class="num">03</span> Catatan Kesehatan</div>
+          <div id="healthNotes"></div>
+        </div>
+
+        <div class="disclaimer">
+          Model ini alat bantu edukasi berbasis prinsip two-process sleep model &amp; laju penyesuaian circadian (~1 jam/hari ke barat, ~1,5 jam/hari ke timur). Bukan pengganti fatigue risk management resmi maskapai maupun nasihat medis. Selalu ikuti aturan duty/rest airline-mu dan konsultasi tenaga kesehatan bila ada keluhan.
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  CrewSync — dibuat untuk awak kabin internasional · v1 prototype
+</footer>
+
+<script>
+// ---------- City → IANA timezone database (offline, DST-aware via Intl) ----------
+const CITIES = {
+  // Indonesia
+  "Balikpapan":"Asia/Makassar","Jakarta":"Asia/Jakarta","Surabaya":"Asia/Jakarta",
+  "Denpasar":"Asia/Makassar","Bali":"Asia/Makassar","Makassar":"Asia/Makassar",
+  "Medan":"Asia/Jakarta","Manado":"Asia/Makassar","Yogyakarta":"Asia/Jakarta",
+  "Batam":"Asia/Jakarta","Jayapura":"Asia/Jayapura","Bandung":"Asia/Jakarta",
+  // Asia hubs
+  "Singapore":"Asia/Singapore","Kuala Lumpur":"Asia/Kuala_Lumpur","Bangkok":"Asia/Bangkok",
+  "Hong Kong":"Asia/Hong_Kong","Tokyo":"Asia/Tokyo","Osaka":"Asia/Tokyo","Seoul":"Asia/Seoul",
+  "Beijing":"Asia/Shanghai","Shanghai":"Asia/Shanghai","Guangzhou":"Asia/Shanghai",
+  "Taipei":"Asia/Taipei","Manila":"Asia/Manila","Ho Chi Minh City":"Asia/Ho_Chi_Minh",
+  "Hanoi":"Asia/Ho_Chi_Minh","Phnom Penh":"Asia/Phnom_Penh","Yangon":"Asia/Yangon",
+  "Colombo":"Asia/Colombo","Dhaka":"Asia/Dhaka","Kathmandu":"Asia/Kathmandu",
+  "New Delhi":"Asia/Kolkata","Delhi":"Asia/Kolkata","Mumbai":"Asia/Kolkata",
+  "Bengaluru":"Asia/Kolkata","Chennai":"Asia/Kolkata","Karachi":"Asia/Karachi",
+  "Islamabad":"Asia/Karachi","Almaty":"Asia/Almaty","Tashkent":"Asia/Tashkent",
+  // Middle East
+  "Doha":"Asia/Qatar","Dubai":"Asia/Dubai","Abu Dhabi":"Asia/Dubai","Riyadh":"Asia/Riyadh",
+  "Jeddah":"Asia/Riyadh","Kuwait":"Asia/Kuwait","Manama":"Asia/Bahrain","Muscat":"Asia/Muscat",
+  "Tehran":"Asia/Tehran","Amman":"Asia/Amman","Beirut":"Asia/Beirut","Baghdad":"Asia/Baghdad",
+  "Tel Aviv":"Asia/Jerusalem","Jerusalem":"Asia/Jerusalem",
+  // Europe
+  "London":"Europe/London","Paris":"Europe/Paris","Amsterdam":"Europe/Amsterdam",
+  "Frankfurt":"Europe/Berlin","Munich":"Europe/Berlin","Berlin":"Europe/Berlin",
+  "Zurich":"Europe/Zurich","Geneva":"Europe/Zurich","Rome":"Europe/Rome","Milan":"Europe/Rome",
+  "Madrid":"Europe/Madrid","Barcelona":"Europe/Madrid","Lisbon":"Europe/Lisbon",
+  "Brussels":"Europe/Brussels","Vienna":"Europe/Vienna","Copenhagen":"Europe/Copenhagen",
+  "Stockholm":"Europe/Stockholm","Oslo":"Europe/Oslo","Helsinki":"Europe/Helsinki",
+  "Athens":"Europe/Athens","Istanbul":"Europe/Istanbul","Moscow":"Europe/Moscow",
+  "Dublin":"Europe/Dublin","Warsaw":"Europe/Warsaw","Prague":"Europe/Prague","Budapest":"Europe/Budapest",
+  // Americas
+  "New York":"America/New_York","Newark":"America/New_York","Boston":"America/New_York",
+  "Washington":"America/New_York","Atlanta":"America/New_York","Miami":"America/New_York",
+  "Toronto":"America/Toronto","Chicago":"America/Chicago","Dallas":"America/Chicago",
+  "Houston":"America/Chicago","Denver":"America/Denver","Los Angeles":"America/Los_Angeles",
+  "San Francisco":"America/Los_Angeles","Seattle":"America/Los_Angeles","Vancouver":"America/Vancouver",
+  "Mexico City":"America/Mexico_City","Sao Paulo":"America/Sao_Paulo","Rio de Janeiro":"America/Sao_Paulo",
+  "Buenos Aires":"America/Argentina/Buenos_Aires","Lima":"America/Lima","Bogota":"America/Bogota",
+  "Santiago":"America/Santiago",
+  // Oceania
+  "Sydney":"Australia/Sydney","Melbourne":"Australia/Melbourne","Brisbane":"Australia/Brisbane",
+  "Perth":"Australia/Perth","Auckland":"Pacific/Auckland","Wellington":"Pacific/Auckland",
+  "Nadi":"Pacific/Fiji","Honolulu":"Pacific/Honolulu","Guam":"Pacific/Guam",
+  // Africa & Indian Ocean
+  "Cairo":"Africa/Cairo","Johannesburg":"Africa/Johannesburg","Cape Town":"Africa/Johannesburg",
+  "Nairobi":"Africa/Nairobi","Addis Ababa":"Africa/Addis_Ababa","Lagos":"Africa/Lagos",
+  "Casablanca":"Africa/Casablanca","Accra":"Africa/Accra","Male":"Indian/Maldives",
+  "Mauritius":"Indian/Mauritius"
+};
+// lowercase lookup index
+const CITY_LC = {};
+Object.keys(CITIES).forEach(k => CITY_LC[k.toLowerCase()] = CITIES[k]);
+// datalist
+(function(){
+  const dl = document.getElementById('cityList');
+  Object.keys(CITIES).sort().forEach(c => {
+    const o = document.createElement('option'); o.value = c; dl.appendChild(o);
+  });
+})();
+
+// resolved state
+const resolved = { origin: null, dest: null };
+
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function lookupCity(q){
+  if(!q) return null;
+  const key = q.trim().toLowerCase();
+  if(CITY_LC[key]) return { iana: CITY_LC[key], exact: true };
+  const hit = Object.keys(CITY_LC).find(k => k.startsWith(key));
+  return hit ? { iana: CITY_LC[hit], exact: false } : null;
+}
+
+// DST-aware offset (hours) for an IANA zone, computed by browser for "now"
+function getOffset(iana){
+  try {
+    const s = new Intl.DateTimeFormat('en-US', { timeZone: iana, timeZoneName: 'shortOffset' })
+      .formatToParts(new Date()).find(p => p.type === 'timeZoneName').value;
+    const m = s.match(/GMT([+-]\d{1,2})(?::(\d{2}))?/);
+    if(!m) return 0;
+    const h = parseInt(m[1]);
+    const mm = m[2] ? parseInt(m[2]) : 0;
+    return h + Math.sign(h) * (mm/60);
+  } catch(e){ return 0; }
+}
+
+function fmtUTC(o){
+  const sign = o >= 0 ? '+' : '−';
+  const a = Math.abs(o); const h = Math.floor(a); const m = Math.round((a-h)*60);
+  return 'UTC' + sign + h + (m ? ':' + pad(m) : '');
+}
+
+function resolveCity(which){
+  const val = document.getElementById(which).value;
+  const found = lookupCity(val);
+  const readEl = document.getElementById('tzread' + cap(which));
+  const fbEl = document.getElementById('tzfallback' + cap(which));
+  if(found){
+    const off = getOffset(found.iana);
+    resolved[which] = { tz: off, iana: found.iana };
+    const place = found.iana.split('/').pop().replace(/_/g,' ');
+    readEl.className = 'tzread ok';
+    readEl.innerHTML = '✓ Zona: <strong>' + fmtUTC(off) + '</strong> · ' + place;
+    fbEl.style.display = 'none';
+  } else if(val.trim() === ''){
+    resolved[which] = null;
+    readEl.className = 'tzread empty';
+    fbEl.style.display = 'none';
+  } else {
+    resolved[which] = null;
+    readEl.className = 'tzread warn';
+    readEl.innerHTML = '✎ Kota belum ada di daftar — pilih zona manual di bawah.';
+    fbEl.style.display = 'block';
+  }
+}
+
+function getResolvedTz(which){
+  if(resolved[which]) return resolved[which].tz;
+  const sel = document.getElementById('tz' + cap(which));
+  const fbVisible = document.getElementById('tzfallback' + cap(which)).style.display !== 'none';
+  return fbVisible && sel ? parseInt(sel.value) : null;
+}
+
+// ---------- Timezone options ----------
+const TZ = [];
+for (let i = -12; i <= 14; i++) TZ.push(i);
+function fillTz(sel, def) {
+  const el = document.getElementById(sel);
+  TZ.forEach(z => {
+    const o = document.createElement('option');
+    o.value = z;
+    o.textContent = (z >= 0 ? 'UTC+' : 'UTC') + z;
+    if (z === def) o.selected = true;
+    el.appendChild(o);
+  });
+}
+fillTz('tzOrigin', 8);  // Balikpapan WITA (fallback only)
+fillTz('tzDest', 3);    // Doha (fallback only)
+
+// resolve default cities on load
+resolveCity('origin');
+resolveCity('dest');
+
+// ---------- Helpers ----------
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmt(hourFloat) {
+  let h = ((hourFloat % 24) + 24) % 24;
+  const hh = Math.floor(h);
+  const mm = Math.round((h - hh) * 60);
+  if (mm === 60) return pad((hh+1)%24) + ':00';
+  return pad(hh) + ':' + pad(mm);
+}
+function parseTime(str){ const [h,m] = str.split(':').map(Number); return h + m/60; }
+
+// Circadian "condition" for a given body-clock hour (0-24).
+// Lowest at ~4-5am (WOCL - window of circadian low), also a dip ~14-16.
+// Returns 0..1 (1 = most alert).
+function alertness(bodyHour) {
+  const h = ((bodyHour % 24) + 24) % 24;
+  // primary trough centered ~4.5, secondary dip ~15
+  const primary = Math.cos((h - 16) / 24 * 2 * Math.PI); // peak ~16, trough ~4
+  const dip = -0.28 * Math.exp(-Math.pow((h - 15)/2.2, 2)); // post-lunch dip
+  let a = 0.5 + 0.5 * primary + dip;
+  return Math.max(0, Math.min(1, a));
+}
+
+function condColor(a) {
+  if (a >= 0.62) return { c: '#4a7c59', label: 'Segar' };
+  if (a >= 0.40) return { c: '#c98a2b', label: 'Sedang' };
+  return { c: '#b5573f', label: 'Loyo (WOCL)' };
+}
+
+// ---------- Main ----------
+function run() {
+  const tzO = getResolvedTz('origin');
+  const tzD = getResolvedTz('dest');
+  if(tzO === null || tzD === null){
+    alert('Lengkapi kota asal & tujuan dulu (atau pilih zona manual kalau kotanya belum terdaftar).');
+    return;
+  }
+  const origin = document.getElementById('origin').value || 'Asal';
+  const dest = document.getElementById('dest').value || 'Tujuan';
+  const dep = parseTime(document.getElementById('depTime').value);
+  const flight = parseFloat(document.getElementById('flightHrs').value) || 0;
+  const ground = parseFloat(document.getElementById('groundHrs').value) || 0;
+  const wake = parseTime(document.getElementById('wakeTime').value);
+
+  const delta = tzD - tzO;                 // + = east (maju), - = west (mundur)
+  const absDelta = Math.abs(delta);
+  const eastward = delta > 0;
+
+  // Adjustment rate: ~1h/day west, ~1.5h/day east
+  const rate = eastward ? 1.5 : 1.0;
+  const daysToAdjust = absDelta / rate;
+
+  // Local arrival time at destination
+  // depart local origin -> arrive local dest = dep + flight + delta
+  const arriveLocal = dep + flight + delta;
+
+  // Body clock offset while at destination (before adjustment):
+  // bodyHour = localDestHour - delta  (tubuh masih pakai jam asal)
+  // We'll compute per hour for the timeline.
+
+  // Jet lag load score (0-100). Bigger delta + east + short ground = worse.
+  let load = absDelta * 8;
+  if (eastward) load *= 1.15;
+  // short ground relative to needed adjustment adds strain
+  const groundDays = ground / 24;
+  if (groundDays < daysToAdjust) load += (daysToAdjust - groundDays) * 6;
+  // red-eye departure penalty (departing during body night 22-06)
+  if (dep >= 22 || dep < 6) load += 6;
+  load = Math.min(100, Math.round(load));
+
+  // ---------- Verdict ----------
+  const vEl = document.getElementById('verdict');
+  const vScore = document.getElementById('vScore');
+  const vMain = document.getElementById('vMain');
+  vScore.textContent = load;
+  let vClass, vText;
+  if (load < 30) { vClass='good'; vText='Ringan — tubuh cepat pulih'; }
+  else if (load < 60) { vClass='mid'; vText='Sedang — butuh strategi tidur & makan'; }
+  else { vClass='bad'; vText='Berat — prioritaskan recovery'; }
+  vEl.className = 'verdict ' + vClass;
+  vMain.textContent = vText;
+
+  // ---------- Metrics ----------
+  const dirTag = eastward
+    ? '<span class="tag east">ke timur</span>'
+    : '<span class="tag west">ke barat</span>';
+  const metrics = [
+    { l:'Selisih Zona', v: (delta>=0?'+':'') + delta, u:' jam ' + dirTag, note: eastward?'arah maju (lebih berat)':'arah mundur (lebih ringan)' },
+    { l:'Tiba di '+dest, v: fmt(arriveLocal), u:' lokal', note: 'jam tubuh: ' + fmt(arriveLocal - delta) },
+    { l:'Lama Layover', v: ground, u:' jam', note: (ground/24).toFixed(1)+' hari' },
+    { l:'Adaptasi Penuh', v: daysToAdjust.toFixed(1), u:' hari', note: '~'+rate+' jam/hari' },
+  ];
+  document.getElementById('metrics').innerHTML = metrics.map(m =>
+    `<div class="metric">
+       <div class="mlabel">${m.l}</div>
+       <div class="mval">${m.v}<span class="unit">${m.u}</span></div>
+       <div class="mnote">${m.note}</div>
+     </div>`).join('');
+
+  // ---------- Timeline (24h at destination, local) ----------
+  // condition based on UN-adjusted body clock at arrival
+  let tlBar = '', tlLegendSet = {};
+  for (let h = 0; h < 24; h++) {
+    const bodyH = h - delta;            // local dest hour -> body(origin) hour
+    const a = alertness(bodyH);
+    const cc = condColor(a);
+    tlLegendSet[cc.label] = cc.c;
+    tlBar += `<div class="tl-seg" style="flex:1;background:${cc.c};" title="${fmt(h)} lokal · kondisi ${cc.label}"></div>`;
+  }
+  document.getElementById('timeline').innerHTML =
+    `<div class="tl-bar">${tlBar}</div>
+     <div class="tl-labels"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
+     <div class="tl-legend">` +
+     Object.entries(tlLegendSet).map(([lab,c]) =>
+       `<span><i class="swatch" style="background:${c}"></i>${lab}</span>`).join('') +
+     `</div>`;
+
+  // ---------- Agenda: chronological plan from landing to next departure ----------
+  // Strategy: short layover / small delta -> anchor to HOME rhythm; else shift to LOCAL.
+  const shortStay = ground < 48 || absDelta <= 2;
+
+  const localAtZero = ((arriveLocal % 24) + 24) % 24;      // local dest clock at t=0 (landing)
+  const bodyAtZero  = ((arriveLocal - delta) % 24 + 24) % 24; // body(home) clock at t=0
+
+  const events = [];
+  const addEv = (t, type, icon, title, desc) => {
+    if (t >= -0.01 && t <= ground + 0.01) events.push({ t, type, icon, title, desc });
+  };
+  // repeat an event every 24h across the whole layover window
+  function cycle(clockZero, target, make) {
+    let base = (((target - clockZero) % 24) + 24) % 24;
+    for (let t = base; t <= ground + 0.01; t += 24) if (t >= -0.01) make(t);
+  }
+
+  // Landing marker
+  addEv(0, 'land', '🛬', `Mendarat di ${dest}`, `Sekarang jam lokal ${fmt(localAtZero)}, jam tubuhmu ${fmt(bodyAtZero)}. Setel jam tanganmu ke waktu ${dest}.`);
+
+  const agendaStratEl = document.getElementById('agendaStrat');
+
+  if (shortStay) {
+    agendaStratEl.innerHTML = `<strong>Strategi: jangkar ke jam rumah (${origin}).</strong> Layover pendek / selisih kecil — lebih hemat menjaga ritme tubuh tetap di ${origin} daripada memaksa adaptasi lalu balik lagi. Jam di bawah = waktu lokal ${dest}; angka kecil = jam tubuhmu.`;
+    const sleepDur = (((wake - 22) % 24) + 24) % 24 || 7.5; // body 22:00 -> wake
+    cycle(bodyAtZero, 22, t => {
+      const endLocal = fmt(localAtZero + t + sleepDur);
+      addEv(t, 'sleep', '🛏️', `Tidur utama (± ${sleepDur.toFixed(1)} jam)`, `Sampai ~${endLocal} lokal. Ini malam versi jam tubuhmu — pakai eye-mask & earplug kalau di luar masih terang.`);
+    });
+    cycle(bodyAtZero, wake, t => addEv(t, 'wake', '⏰', 'Bangun', 'Jam bangun normalmu. Buka tirai / cari cahaya kalau di tujuan sudah pagi juga.'));
+    cycle(bodyAtZero, wake + 0.75, t => addEv(t, 'meal', '🍳', 'Sarapan', 'Protein + air. Porsi normal.'));
+    cycle(bodyAtZero, 12.5, t => addEv(t, 'meal', '🥗', 'Makan siang', 'Porsi utama hari ini.'));
+    cycle(bodyAtZero, 18.5, t => addEv(t, 'meal', '🍽️', 'Makan malam', 'Selesai sebelum jam tubuh lewat 21:00 biar pencernaan tenang saat tidur.'));
+    cycle(bodyAtZero, 14.5, t => addEv(t, 'caf', '☕', 'Kafein terakhir', 'Stop kopi/teh setelah ini (± 8 jam sebelum tidur).'));
+  } else {
+    agendaStratEl.innerHTML = `<strong>Strategi: geser ke jam lokal (${dest}).</strong> Layover cukup panjang — worth menyesuaikan ke ritme ${dest} supaya bisa berfungsi normal. Jam di bawah = waktu lokal ${dest}; angka kecil = jam tubuhmu.`;
+    cycle(localAtZero, 23, t => addEv(t, 'sleep', '🛏️', 'Tidur utama (± 8 jam)', `Sampai ~${fmt(localAtZero + t + 8)} lokal. Target malam lokal ${dest}. Malam pertama bisa terpecah — itu wajar.`));
+    cycle(localAtZero, 7, t => addEv(t, 'wake', '⏰', 'Bangun', 'Ikut pagi lokal. Langsung cari cahaya terang.'));
+    cycle(localAtZero, 7.5, t => addEv(t, 'meal', '🍳', 'Sarapan lokal', 'Protein + cahaya pagi = sinyal kuat "ini pagi".'));
+    if (eastward) {
+      cycle(localAtZero, 8.5, t => addEv(t, 'light', '🌅', 'Cari cahaya pagi', 'Arah timur: 30–60 mnt cahaya terang memajukan jam tubuh. Hindari cahaya terang larut malam.'));
+    } else {
+      cycle(localAtZero, 17, t => addEv(t, 'light', '🌆', 'Cari cahaya sore', 'Arah barat: cahaya sore memundurkan jam tubuh agar melek lebih lama.'));
+    }
+    cycle(localAtZero, 12.5, t => addEv(t, 'meal', '🥗', 'Makan siang lokal', 'Porsi utama saat tubuh masih beradaptasi.'));
+    cycle(localAtZero, 19, t => addEv(t, 'meal', '🍲', 'Makan malam lokal', 'Ringan & lebih awal; hindari begadang dengan perut penuh.'));
+    cycle(localAtZero, 15, t => addEv(t, 'caf', '☕', 'Kafein terakhir', '± 8 jam sebelum tidur lokal.'));
+  }
+
+  // Pre-duty prep + return departure
+  if (ground - 2.5 > 0.5) {
+    addEv(ground - 2.5, 'prep', '🎒', 'Siap-siap duty balik', 'Bangun (kalau masih tidur), mandi, makan ringan, hidrasi, dan lapor sesuai aturan maskapai.');
+  }
+  addEv(ground, 'depart', '🛫', `Terbang balik ke ${origin}`, 'Mulai perjalanan pulang. Ingat WOCL: titik terloyo tubuh ada di sekitar jam tubuh 03:00–05:00.');
+
+  // sort by time, then by a sensible order for same-time events
+  const ORD = { land:0, wake:1, light:2, meal:3, caf:4, prep:5, sleep:6, depart:9 };
+  events.sort((a, b) => (a.t - b.t) || ((ORD[a.type]||5) - (ORD[b.type]||5)));
+
+  // render grouped by local day
+  let agendaHTML = '', lastDay = null;
+  events.forEach(e => {
+    const localAbs = localAtZero + e.t;
+    const day = Math.floor(localAbs / 24);
+    if (day !== lastDay) {
+      agendaHTML += `<div class="ag-day">Hari ${day + 1}</div>`;
+      lastDay = day;
+    }
+    const a = alertness(bodyAtZero + e.t);
+    const cc = condColor(a);
+    agendaHTML += `<div class="ag-item ag-${e.type}">
+        <div class="ag-time"><span class="ag-local">${fmt(localAbs)}</span><span class="ag-body">tubuh ${fmt(bodyAtZero + e.t)}</span></div>
+        <span class="ag-dot" style="background:${cc.c}" title="kondisi tubuh: ${cc.label}"></span>
+        <div class="ag-icon">${e.icon}</div>
+        <div class="ag-content"><div class="ag-title">${e.title}</div><div class="ag-desc">${e.desc}</div></div>
+      </div>`;
+  });
+  document.getElementById('agenda').innerHTML = agendaHTML;
+
+  // ---------- Health notes ----------
+  const notes = [];
+  // WOCL note
+  notes.push({ icon:'⚠️', title:'Window of Circadian Low (WOCL)', desc:'Titik terendah tubuhmu ada di sekitar jam tubuh 03:00–05:00. Saat terbang balik, itu jatuh pada '+fmt(4 - 0 + delta)+' waktu tujuan / '+fmt(4)+' jam rumah — jaga ekstra fokus, ini rawan microsleep.' });
+  // Hydration
+  notes.push({ icon:'💧', title:'Hidrasi kabin', desc:'Kelembapan kabin ~10–20%. Target ~250 ml air tiap jam terbang; batasi kafein &amp; alkohol yang memperberat dehidrasi + ganggu tidur.' });
+  // Caffeine cutoff
+  const cafCut = shortStay ? (wake + delta + 8) : 14;
+  notes.push({ icon:'☕', title:'Batas kafein terakhir', desc:'Berhenti kafein ±8 jam sebelum jendela tidur utamamu (sekitar '+fmt(cafCut)+' lokal) supaya tidak merusak kualitas tidur.' });
+  // Movement
+  notes.push({ icon:'🏃', title:'Gerak & olahraga', desc: (load>=60)
+      ? 'Beban berat: tunda latihan intens 1–2 hari, cukup jalan/mobilitas ringan sampai tidur stabil.'
+      : 'Beban ringan–sedang: olahraga ringan di pagi lokal justru mempercepat adaptasi. Hindari latihan berat dekat jam tidur.' });
+  // Recovery at home
+  notes.push({ icon:'🔄', title:'Pemulihan setibanya di rumah', desc:'Butuh ~'+daysToAdjust.toFixed(1)+' hari untuk resync penuh setelah trip ini. Jadwalkan aktivitas berat/penting setelah jendela itu, bukan di hari pertama pulang.' });
+
+  document.getElementById('healthNotes').innerHTML = notes.map(n =>
+    `<div class="rec"><div class="ricon">${n.icon}</div><div class="rbody">
+       <div class="rtitle">${n.title}</div>
+       <div class="rdesc">${n.desc}</div></div></div>`).join('');
+
+  // reveal
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+</script>
+</body>
+</html>
