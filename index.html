@@ -4,960 +4,712 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CrewSync — Ritme Terbang & Kesehatan Awak Kabin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@400;450;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink: #0a1628;
-    --ink-soft: #33445c;
-    --paper: #f5f3ee;
-    --paper-warm: #ece7dc;
-    --sky: #1b4b73;
-    --sky-bright: #2e7cb8;
-    --dawn: #e8a04b;
-    --dusk: #b5573f;
-    --night: #14213d;
-    --rest: #3a6b8c;
-    --line: #cfc7b8;
-    --alert-good: #4a7c59;
-    --alert-mid: #c98a2b;
-    --alert-bad: #b5573f;
-    --shadow: rgba(10,22,40,0.10);
+  :root{
+    --red:#D71A21;         /* Emirates red */
+    --red-deep:#9E1519;
+    --red-soft:#F3D9D5;
+    --gold:#B8924A;        /* muted gold accent */
+    --gold-soft:#EAD9B8;
+    --ink:#23262B;
+    --ink-2:#5E656E;
+    --muted:#9AA0A8;
+    --bg:#FBF7F1;          /* warm cream */
+    --card:#FFFFFF;
+    --sand:#F4EEE4;
+    --line:#EBE3D6;
+    --good:#4C7A5B;
+    --mid:#C08A2E;
+    --low:#C0453B;
+    --shadow:0 6px 28px rgba(35,28,20,.07);
+    --font-sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --font-disp:'Fraunces',Georgia,'Times New Roman',serif;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Georgia', 'Times New Roman', serif;
-    background: var(--paper);
-    color: var(--ink);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--font-sans);
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    font-size:15px;
   }
-  .mono { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; }
-  .sans { font-family: 'Helvetica Neue', 'Arial', sans-serif; }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 1.25rem;}
 
-  /* ===== Header ===== */
-  header {
-    background: linear-gradient(160deg, var(--night) 0%, var(--sky) 100%);
-    color: var(--paper);
-    padding: 2.4rem 1.5rem 2rem;
-    position: relative;
-    overflow: hidden;
+  /* ---------- Header ---------- */
+  header{
+    background:
+      radial-gradient(120% 140% at 85% -20%, rgba(184,146,74,.30), transparent 55%),
+      linear-gradient(155deg,var(--red-deep) 0%, var(--red) 78%);
+    color:#fff;padding:3rem 0 2.6rem;position:relative;overflow:hidden;
   }
-  header::after {
-    content: "";
-    position: absolute;
-    top: -40%; right: -10%;
-    width: 340px; height: 340px;
-    background: radial-gradient(circle, rgba(232,160,75,0.35) 0%, transparent 65%);
-    pointer-events: none;
+  header .wrap{position:relative;z-index:1;}
+  .brand{
+    display:flex;align-items:center;gap:.6rem;
+    font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--gold-soft);font-weight:600;margin-bottom:1.1rem;
   }
-  .wrap { max-width: 940px; margin: 0 auto; }
-  .brandline {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.72rem;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: var(--dawn);
-    margin-bottom: 0.6rem;
+  .brand .dot{width:7px;height:7px;border-radius:50%;background:var(--gold-soft);}
+  h1{
+    font-family:var(--font-disp);font-weight:300;font-size:clamp(2.1rem,5.4vw,3.4rem);
+    line-height:1.05;letter-spacing:-.01em;max-width:16ch;
   }
-  h1 {
-    font-size: clamp(1.9rem, 5vw, 2.9rem);
-    font-weight: normal;
-    letter-spacing: -0.01em;
-    line-height: 1.08;
-  }
-  h1 em { font-style: italic; color: var(--dawn); }
-  .sub {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.92rem;
-    color: rgba(245,243,238,0.82);
-    margin-top: 0.8rem;
-    max-width: 560px;
+  h1 em{font-style:italic;color:var(--gold-soft);}
+  header p{
+    margin-top:1rem;max-width:52ch;color:rgba(255,255,255,.86);
+    font-size:1rem;font-weight:400;
   }
 
-  /* ===== Layout ===== */
-  main { max-width: 940px; margin: 0 auto; padding: 1.5rem; }
-  .grid { display: grid; grid-template-columns: 1fr; gap: 1.4rem; }
-  @media (min-width: 820px) {
-    .grid { grid-template-columns: 340px 1fr; align-items: start; }
-    .panel-form { position: sticky; top: 1rem; }
+  main{padding:1.6rem 0 3rem;}
+  .layout{display:grid;grid-template-columns:1fr;gap:1.5rem;}
+  @media(min-width:860px){
+    .layout{grid-template-columns:355px 1fr;align-items:start;}
+    .form-col{position:sticky;top:1.25rem;}
   }
 
-  .card {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    box-shadow: 0 1px 3px var(--shadow);
+  /* ---------- Cards ---------- */
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    box-shadow:var(--shadow);overflow:hidden;
   }
-  .card-pad { padding: 1.3rem 1.3rem 1.5rem; }
+  .card+.card{margin-top:1.4rem;}
+  .pad{padding:1.4rem 1.4rem 1.55rem;}
 
-  .eyebrow {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.66rem;
-    letter-spacing: 0.26em;
-    text-transform: uppercase;
-    color: var(--sky-bright);
-    margin-bottom: 0.9rem;
-    display: flex; align-items: center; gap: 0.5rem;
+  .kicker{
+    font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--red);font-weight:700;margin-bottom:1.1rem;
   }
-  .eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .sec-title{
+    font-family:var(--font-disp);font-weight:400;font-size:1.35rem;
+    letter-spacing:-.01em;color:var(--ink);margin-bottom:.2rem;
+  }
+  .sec-sub{color:var(--ink-2);font-size:.86rem;margin-bottom:1.1rem;}
 
-  label {
-    display: block;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.74rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--ink-soft);
-    margin: 0.9rem 0 0.3rem;
-    text-transform: uppercase;
+  /* ---------- Form ---------- */
+  label{display:block;font-size:.74rem;font-weight:600;color:var(--ink-2);
+    margin:1.05rem 0 .35rem;letter-spacing:.01em;}
+  label:first-of-type{margin-top:0;}
+  label .opt{color:var(--muted);font-weight:450;text-transform:none;letter-spacing:0;}
+  input,select{
+    width:100%;padding:.66rem .75rem;border:1px solid var(--line);border-radius:10px;
+    font-family:var(--font-sans);font-size:.95rem;background:#FCFAF6;color:var(--ink);
+    transition:border-color .2s, box-shadow .2s, background .2s;
+    font-variant-numeric:tabular-nums;
   }
-  label:first-of-type { margin-top: 0; }
-  .hint {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.68rem;
-    color: #8a8578;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-  }
-  input, select {
-    width: 100%;
-    padding: 0.6rem 0.7rem;
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    font-size: 0.95rem;
-    font-family: 'SF Mono', Menlo, monospace;
-    background: var(--paper);
-    color: var(--ink);
-  }
-  input:focus, select:focus {
-    outline: 2px solid var(--sky-bright);
-    outline-offset: 0;
-    background: #fff;
-  }
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  input:focus,select:focus{outline:none;border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(184,146,74,.18);background:#fff;}
+  input::placeholder{color:#BDBAB2;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;}
 
-  .tzread {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.72rem;
-    margin-top: 0.35rem;
-    padding: 0.35rem 0.55rem;
-    border-radius: 2px;
-    letter-spacing: 0.01em;
-  }
-  .tzread.ok { background: #e4efe7; color: #3a6b47; }
-  .tzread.ok strong { color: #2f5a3a; }
-  .tzread.warn { background: #f6e6d8; color: #9c5a2b; }
-  .tzread.empty { display: none; }
-  .tzfallback { margin-top: 0.5rem; }
+  .durbox{position:relative;}
+  .durbox input{padding-right:2.9rem;}
+  .durbox span{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);
+    font-size:.72rem;color:var(--muted);pointer-events:none;}
 
-  button.go {
-    width: 100%;
-    margin-top: 1.4rem;
-    padding: 0.85rem;
-    background: var(--dusk);
-    color: var(--paper);
-    border: none;
-    border-radius: 2px;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  button.go:hover { background: #9c4635; }
+  .zone{font-size:.74rem;margin-top:.35rem;padding:.4rem .6rem;border-radius:8px;
+    display:none;align-items:center;gap:.4rem;}
+  .zone.ok{display:flex;background:#EAF1EC;color:#3B6349;}
+  .zone.warn{display:flex;background:#FBEEDD;color:#9A6A22;}
+  .zone b{font-weight:600;}
+  .fallback{margin-top:.5rem;display:none;}
 
-  /* ===== Results ===== */
-  #results { display: none; }
-  #results.show { display: block; }
-  .placeholder {
-    padding: 3rem 1.5rem;
-    text-align: center;
-    color: #9a9484;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.88rem;
+  .cta{
+    width:100%;margin-top:1.5rem;padding:.9rem;border:none;border-radius:11px;
+    background:linear-gradient(135deg,var(--red) 0%,var(--red-deep) 100%);
+    color:#fff;font-family:var(--font-sans);font-size:.9rem;font-weight:600;
+    letter-spacing:.02em;cursor:pointer;transition:transform .12s, box-shadow .2s;
+    box-shadow:0 6px 18px rgba(215,26,33,.28);
   }
-  .placeholder .big { font-size: 2.4rem; margin-bottom: 0.6rem; }
+  .cta:hover{transform:translateY(-1px);box-shadow:0 9px 22px rgba(215,26,33,.34);}
+  .cta:active{transform:translateY(0);}
 
-  .verdict {
-    padding: 1.2rem 1.3rem;
-    border-radius: 3px 3px 0 0;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  /* ---------- Advanced ---------- */
+  .adv-toggle{
+    width:100%;margin-top:1.3rem;padding:.7rem .8rem;text-align:left;cursor:pointer;
+    background:var(--sand);border:1px solid var(--line);border-radius:11px;
+    font-family:var(--font-sans);font-size:.8rem;font-weight:600;color:var(--ink-2);
+    display:flex;align-items:center;gap:.5rem;transition:background .2s;
   }
-  .verdict.good { background: var(--alert-good); }
-  .verdict.mid  { background: var(--alert-mid); }
-  .verdict.bad  { background: var(--alert-bad); }
-  .verdict .score {
-    font-size: 2.6rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-weight: 800;
-    line-height: 1;
-  }
-  .verdict .vtext { font-family: 'Helvetica Neue', Arial, sans-serif; }
-  .verdict .vtext .vlabel {
-    font-size: 0.66rem; letter-spacing: 0.22em; text-transform: uppercase; opacity: 0.85;
-  }
-  .verdict .vtext .vmain { font-size: 1.05rem; font-weight: 700; margin-top: 0.15rem; }
+  .adv-toggle:hover{background:#EDE5D7;}
+  .adv-toggle .caret{color:var(--gold);transition:transform .2s;font-size:.7rem;}
+  .adv-toggle.open .caret{transform:rotate(90deg);}
+  .adv-panel{display:none;margin-top:.6rem;padding:1rem;border:1px solid var(--line);
+    border-radius:11px;background:#FCFAF6;}
+  .adv-panel.open{display:block;}
+  .adv-help{font-size:.75rem;color:var(--ink-2);line-height:1.5;margin-bottom:.9rem;}
+  label.mini{font-size:.66rem;margin:0 0 .3rem;}
+  .adv-add{width:100%;margin-top:.7rem;padding:.6rem;border:none;border-radius:9px;
+    background:var(--ink);color:#fff;font-family:var(--font-sans);font-size:.76rem;
+    font-weight:600;letter-spacing:.02em;cursor:pointer;transition:background .2s;}
+  .adv-add:hover{background:#3a3f46;}
+  .act-list{margin-top:.85rem;display:flex;flex-direction:column;gap:.45rem;}
+  .act-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .6rem;background:#fff;
+    border:1px solid var(--line);border-radius:9px;}
+  .act-item .txt{flex:1;min-width:0;}
+  .act-item .txt b{font-size:.8rem;font-weight:600;display:block;color:var(--ink);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .act-item .txt small{font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .act-del{background:none;border:none;color:var(--low);cursor:pointer;font-size:1rem;
+    padding:.1rem .3rem;line-height:1;}
 
-  .metrics {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    border-top: 1px solid var(--line);
-  }
-  @media (min-width: 560px) { .metrics { grid-template-columns: repeat(4, 1fr); } }
-  .metric {
-    padding: 1rem 0.9rem;
-    border-right: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-  }
-  .metric:nth-child(2n) { border-right: none; }
-  @media (min-width: 560px) {
-    .metric:nth-child(2n) { border-right: 1px solid var(--line); }
-    .metric:nth-child(4n) { border-right: none; }
-  }
-  .metric .mlabel {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
-    color: #8a8578; margin-bottom: 0.35rem;
-  }
-  .metric .mval {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 1.35rem; font-weight: 700; color: var(--ink);
-  }
-  .metric .mval .unit { font-size: 0.72rem; font-weight: 400; color: var(--ink-soft); }
-  .metric .mnote { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.66rem; color: #9a9484; margin-top: 0.2rem; }
+  /* ---------- Placeholder ---------- */
+  .empty{padding:3.4rem 1.5rem;text-align:center;color:var(--muted);}
+  .empty .mk{font-family:var(--font-disp);font-size:2.4rem;color:var(--gold);margin-bottom:.5rem;}
 
-  .section-h {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em;
-    color: var(--ink); margin: 1.6rem 0 0.2rem;
-    display: flex; align-items: baseline; gap: 0.5rem;
-  }
-  .section-h .num {
-    font-family: 'SF Mono', monospace; font-size: 0.72rem; color: var(--sky-bright);
-    font-weight: 400;
-  }
-  .section-sub {
-    font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.76rem;
-    color: #8a8578; margin-bottom: 0.8rem;
-  }
+  #out{display:none;}
+  #out.show{display:block;}
 
-  /* Timeline */
-  .timeline { margin: 0.5rem 0 0.3rem; }
-  .tl-bar {
-    display: flex; height: 34px; border-radius: 2px; overflow: hidden;
-    border: 1px solid var(--line); font-size: 0;
-  }
-  .tl-seg { position: relative; }
-  .tl-labels {
-    display: flex; justify-content: space-between; margin-top: 0.3rem;
-    font-family: 'SF Mono', monospace; font-size: 0.62rem; color: #9a9484;
-  }
-  .tl-legend {
-    display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.7rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.7rem; color: var(--ink-soft);
-  }
-  .tl-legend span { display: inline-flex; align-items: center; gap: 0.35rem; }
-  .swatch { width: 11px; height: 11px; border-radius: 2px; display: inline-block; }
+  /* ---------- Verdict ---------- */
+  .verdict{display:flex;align-items:center;gap:1.2rem;padding:1.4rem;color:#fff;}
+  .verdict.good{background:linear-gradient(135deg,#4C7A5B,#3C6249);}
+  .verdict.mid{background:linear-gradient(135deg,#C08A2E,#A0721F);}
+  .verdict.bad{background:linear-gradient(135deg,#C0453B,#9E332B);}
+  .verdict .score{font-family:var(--font-disp);font-weight:300;font-size:3rem;line-height:1;}
+  .verdict .vl{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;opacity:.85;}
+  .verdict .vm{font-size:1.05rem;font-weight:600;margin-top:.15rem;}
 
-  /* Recommendation blocks */
-  .rec {
-    display: flex; gap: 0.85rem; padding: 0.85rem 0;
-    border-bottom: 1px dashed var(--line);
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-  }
-  .rec:last-child { border-bottom: none; }
-  .rec .ricon {
-    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
-    display: grid; place-items: center; font-size: 1.2rem;
-    background: var(--paper-warm);
-  }
-  .rec .rbody { flex: 1; }
-  .rec .rtitle { font-size: 0.86rem; font-weight: 700; color: var(--ink); }
-  .rec .rtime {
-    font-family: 'SF Mono', monospace; font-size: 0.8rem; color: var(--dusk); font-weight: 700;
-  }
-  .rec .rdesc { font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.15rem; }
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);}
+  @media(min-width:560px){.stats{grid-template-columns:repeat(4,1fr);}}
+  .stat{padding:1rem 1.1rem;border-top:1px solid var(--line);border-right:1px solid var(--line);}
+  .stat:nth-child(2n){border-right:none;}
+  @media(min-width:560px){.stat:nth-child(2n){border-right:1px solid var(--line);}
+    .stat:nth-child(4n){border-right:none;}}
+  .stat .sl{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.3rem;}
+  .stat .sv{font-size:1.3rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .stat .sv small{font-size:.72rem;font-weight:500;color:var(--ink-2);}
+  .stat .sn{font-size:.66rem;color:var(--muted);margin-top:.15rem;}
+  .tag{display:inline-block;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
+    padding:.12rem .45rem;border-radius:5px;font-weight:700;margin-left:.35rem;vertical-align:middle;}
+  .tag.e{background:var(--red-soft);color:var(--red-deep);}
+  .tag.w{background:#D8E6EE;color:#2C5A73;}
 
-  /* Agenda kronologis */
-  .agenda { margin-top: 0.5rem; }
-  .ag-day {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--sky-bright); margin: 1.1rem 0 0.4rem; padding-bottom: 0.3rem;
-    border-bottom: 1px solid var(--line);
-  }
-  .ag-day:first-child { margin-top: 0; }
-  .ag-item {
-    display: grid;
-    grid-template-columns: 60px 12px 30px 1fr;
-    gap: 0.55rem; align-items: start;
-    padding: 0.6rem 0.4rem; border-bottom: 1px dashed var(--line);
-    border-radius: 2px;
-  }
-  .ag-time { display: flex; flex-direction: column; }
-  .ag-local { font-family: 'SF Mono', Menlo, monospace; font-weight: 700; font-size: 0.88rem; color: var(--ink); }
-  .ag-body  { font-family: 'SF Mono', Menlo, monospace; font-size: 0.58rem; color: #9a9484; margin-top: 0.05rem; }
-  .ag-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 0.35rem; flex-shrink: 0; }
-  .ag-icon { font-size: 1.1rem; text-align: center; }
-  .ag-content { min-width: 0; }
-  .ag-title { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 700; font-size: 0.82rem; color: var(--ink); }
-  .ag-desc  { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 0.73rem; color: var(--ink-soft); margin-top: 0.12rem; line-height: 1.4; }
-  .ag-item.ag-sleep { background: linear-gradient(90deg, rgba(58,107,140,0.09), transparent); }
-  .ag-item.ag-land, .ag-item.ag-depart { background: linear-gradient(90deg, rgba(181,87,63,0.10), transparent); }
-  .ag-item.ag-land .ag-title, .ag-item.ag-depart .ag-title { color: var(--dusk); }
-  .ag-item.ag-plan { background: linear-gradient(90deg, rgba(232,160,75,0.16), transparent); }
-  .ag-item.ag-plan .ag-title { color: #a86a1f; }
-  .ag-skip {
-    font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.72rem; color:#9c5a2b;
-    background:#f6e6d8; border-radius:2px; padding:0.6rem 0.8rem; margin-top:0.8rem; line-height:1.45;
-  }
-  /* Duration inputs (jam + menit) */
-  .row2.dur .durbox { position:relative; display:flex; align-items:center; }
-  .row2.dur .durbox input { padding-right:2.7rem; }
-  .row2.dur .durbox span {
-    position:absolute; right:0.6rem; font-family:'Helvetica Neue',Arial,sans-serif;
-    font-size:0.7rem; color:#8a8578; pointer-events:none;
-  }
-  /* Advanced panel */
-  .adv-toggle {
-    width:100%; margin-top:1.2rem; padding:0.6rem 0.7rem; text-align:left;
-    background:var(--paper-warm); border:1px solid var(--line); border-radius:2px;
-    font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.76rem; font-weight:700;
-    color:var(--ink-soft); cursor:pointer; letter-spacing:0.02em;
-  }
-  .adv-toggle:hover { background:#e2dccf; }
-  .adv-toggle .caret { color:var(--sky-bright); margin-right:0.35rem; }
-  .adv-panel { display:none; padding:0.9rem; border:1px solid var(--line); border-top:none; background:var(--paper); }
-  .adv-help { font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.72rem; color:#8a8578; line-height:1.5; margin-bottom:0.8rem; }
-  label.mini { font-size:0.64rem; margin:0 0 0.25rem; }
-  .adv-add {
-    width:100%; margin-top:0.7rem; padding:0.55rem; background:var(--sky); color:var(--paper);
-    border:none; border-radius:2px; font-family:'Helvetica Neue',Arial,sans-serif;
-    font-size:0.72rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer;
-  }
-  .adv-add:hover { background:var(--sky-bright); }
-  .act-list { margin-top:0.8rem; display:flex; flex-direction:column; gap:0.4rem; }
-  .act-item {
-    display:flex; align-items:center; gap:0.5rem; padding:0.45rem 0.55rem;
-    background:#fff; border:1px solid var(--line); border-radius:2px;
-  }
-  .act-ic { font-size:1rem; }
-  .act-txt { flex:1; display:flex; flex-direction:column; min-width:0; }
-  .act-txt strong { font-family:'Helvetica Neue',Arial,sans-serif; font-size:0.78rem; color:var(--ink); }
-  .act-meta { font-size:0.64rem; color:#9a9484; font-family:'SF Mono',monospace; }
-  .act-del { background:none; border:none; color:#b5573f; cursor:pointer; font-size:0.9rem; padding:0.2rem; }
-  .act-del:hover { color:#8a3d2c; }
+  /* ---------- Ritme bar ---------- */
+  .rbar{display:flex;height:38px;border-radius:9px;overflow:hidden;border:1px solid var(--line);}
+  .rbar div{flex:1;}
+  .rlabels{display:flex;justify-content:space-between;margin-top:.4rem;font-size:.62rem;
+    color:var(--muted);font-variant-numeric:tabular-nums;}
+  .legend{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;margin-top:.75rem;font-size:.72rem;color:var(--ink-2);}
+  .legend span{display:inline-flex;align-items:center;gap:.35rem;}
+  .sw{width:11px;height:11px;border-radius:3px;}
 
-  .callout {
-    background: var(--paper-warm);
-    border-left: 3px solid var(--sky-bright);
-    padding: 0.8rem 1rem;
-    margin-top: 1rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.78rem;
-    color: var(--ink-soft);
-    border-radius: 0 2px 2px 0;
-  }
-  .callout strong { color: var(--ink); }
+  /* ---------- Agenda timeline (signature) ---------- */
+  .strat{background:var(--sand);border-left:3px solid var(--gold);border-radius:0 9px 9px 0;
+    padding:.75rem .95rem;font-size:.82rem;color:var(--ink-2);margin-bottom:1.1rem;line-height:1.5;}
+  .strat b{color:var(--ink);}
+  .daydiv{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);
+    font-weight:700;margin:1.4rem 0 .7rem;display:flex;align-items:center;gap:.6rem;}
+  .daydiv::after{content:"";flex:1;height:1px;background:var(--line);}
+  .daydiv:first-child{margin-top:0;}
 
-  .disclaimer {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.68rem; color: #9a9484; line-height: 1.5;
-    margin-top: 1.4rem; padding-top: 1rem; border-top: 1px solid var(--line);
-  }
-  footer {
-    text-align: center; padding: 2rem 1.5rem 3rem;
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.72rem; color: #9a9484;
-  }
-  .tag {
-    display: inline-block; font-family: 'Helvetica Neue', Arial, sans-serif;
-    font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
-    padding: 0.15rem 0.5rem; border-radius: 2px; margin-left: 0.4rem;
-    vertical-align: middle;
-  }
-  .tag.east { background: #f3e0d5; color: var(--dusk); }
-  .tag.west { background: #d5e5f0; color: var(--sky); }
+  .ev{display:grid;grid-template-columns:58px 22px 1fr;gap:.1rem;}
+  .ev-time{padding-top:.55rem;text-align:right;padding-right:.1rem;}
+  .ev-time b{display:block;font-size:.86rem;font-weight:600;color:var(--ink);
+    font-variant-numeric:tabular-nums;letter-spacing:-.01em;}
+  .ev-time small{font-size:.6rem;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .ev-rail{position:relative;display:flex;justify-content:center;}
+  .ev-rail::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--line);}
+  .ev:first-of-type .ev-rail::before{top:.7rem;}
+  .ev:last-of-type .ev-rail::before{bottom:calc(100% - .7rem);}
+  .ev-dot{position:relative;z-index:1;width:11px;height:11px;border-radius:50%;margin-top:.7rem;
+    background:var(--c,var(--muted));box-shadow:0 0 0 3px var(--card);}
+  .ev-body{padding:.4rem 0 .5rem .7rem;}
+  .ev-card{background:transparent;border-radius:10px;padding:.15rem 0;}
+  .ev-head{display:flex;align-items:center;gap:.5rem;}
+  .ev-ic{font-size:1rem;line-height:1;}
+  .ev-title{font-size:.9rem;font-weight:600;color:var(--ink);}
+  .ev-desc{font-size:.76rem;color:var(--ink-2);margin-top:.15rem;line-height:1.45;}
+
+  .ev-sleep .ev-body{background:linear-gradient(90deg,rgba(44,90,115,.06),transparent);
+    border-radius:10px;}
+  .ev-plan .ev-title{color:var(--gold);}
+  .ev-plan .ev-body{background:linear-gradient(90deg,rgba(184,146,74,.10),transparent);border-radius:10px;}
+  .ev-land .ev-title,.ev-depart .ev-title{color:var(--red);}
+  .warn{color:var(--low);font-weight:500;}
+
+  .skip{font-size:.74rem;color:#9A6A22;background:#FBEEDD;border-radius:9px;
+    padding:.6rem .8rem;margin-top:1rem;line-height:1.45;}
+
+  /* actual-sleep adjustment */
+  .adjhint{font-size:.74rem;color:var(--ink-2);background:var(--sand);border-radius:9px;
+    padding:.6rem .8rem;margin-bottom:1.1rem;line-height:1.45;}
+  .adjhint b{color:var(--red);}
+  .badge-act{font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;
+    background:var(--good);color:#fff;padding:.1rem .4rem;border-radius:5px;margin-left:.5rem;}
+  .ev-actual .ev-body{background:linear-gradient(90deg,rgba(76,122,91,.10),transparent);border-radius:10px;}
+  .adj-btn{margin-top:.5rem;font-size:.7rem;font-weight:600;color:var(--red);
+    background:none;border:1px solid var(--red-soft);border-radius:7px;padding:.3rem .6rem;cursor:pointer;
+    transition:background .15s;}
+  .adj-btn:hover{background:var(--red-soft);}
+  .adjbox{margin-top:.6rem;padding:.7rem;background:#fff;border:1px solid var(--line);border-radius:10px;}
+  .adjrow{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;}
+  .adjrow label{margin:0;font-size:.66rem;color:var(--ink-2);text-transform:none;letter-spacing:0;}
+  .adjrow input{width:auto;flex:1;min-width:90px;padding:.4rem .5rem;font-size:.85rem;}
+  .adjbtns{display:flex;gap:.4rem;margin-top:.6rem;flex-wrap:wrap;}
+  .adjbtns button{font-size:.72rem;font-weight:600;border-radius:7px;padding:.4rem .7rem;cursor:pointer;border:none;}
+  .adj-apply{background:var(--red);color:#fff;}
+  .adj-reset{background:var(--sand);color:var(--ink-2);border:1px solid var(--line);}
+  .adj-cancel{background:none;color:var(--muted);border:1px solid var(--line);}
+
+  /* ---------- Notes ---------- */
+  .note{display:flex;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--line);}
+  .note:last-child{border-bottom:none;}
+  .note .ni{flex-shrink:0;width:34px;height:34px;border-radius:9px;background:var(--sand);
+    display:grid;place-items:center;font-size:1rem;}
+  .note b{font-size:.85rem;font-weight:600;color:var(--ink);}
+  .note p{font-size:.78rem;color:var(--ink-2);margin-top:.1rem;line-height:1.45;}
+
+  .disc{font-size:.7rem;color:var(--muted);line-height:1.55;margin-top:1.3rem;
+    padding-top:1rem;border-top:1px solid var(--line);}
+  footer{text-align:center;padding:2rem 0 1rem;font-size:.72rem;color:var(--muted);}
+
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap">
-    <div class="brandline">CrewSync · Circadian & Health Model</div>
-    <h1>Terbang lintas zona,<br><em>tubuh tetap sinkron.</em></h1>
-    <p class="sub">Masukkan jadwal terbangmu. Model ini menghitung beban jet lag, memperkirakan kapan tubuhmu paling loyo, dan menyusun jendela tidur &amp; makan supaya rutinitas tidak berantakan.</p>
+    <div class="brand"><span class="dot"></span>CrewSync · Circadian & Health</div>
+    <h1>Terbang lintas zona, <em>tubuh tetap sinkron.</em></h1>
+    <p>Masukkan jadwal terbangmu. CrewSync menyusun agenda tidur, makan, dan cahaya dari mendarat sampai terbang lagi — dihitung dari model ritme sirkadian, bukan tebakan.</p>
   </div>
 </header>
 
-<main>
-  <div class="grid">
-    <!-- ===== FORM ===== -->
-    <div class="panel-form">
-      <div class="card card-pad">
-        <div class="eyebrow">Data Penerbangan</div>
+<main><div class="wrap"><div class="layout">
 
-        <label>Kota Asal (home base)
-          <span class="hint">— tempat "jam tubuhmu" saat ini disetel</span>
-        </label>
-        <input id="origin" type="text" list="cityList" value="Balikpapan" placeholder="ketik nama kota…" autocomplete="off" oninput="resolveCity('origin')">
-        <div class="tzread empty" id="tzreadOrigin"></div>
-        <div class="tzfallback" id="tzfallbackOrigin" style="display:none">
-          <label>Zona tak dikenal — pilih manual</label>
-          <select id="tzOrigin"></select>
-        </div>
+  <!-- ============ FORM ============ -->
+  <div class="form-col">
+    <div class="card pad">
+      <div class="kicker">Jadwal Penerbangan</div>
 
-        <label>Kota Tujuan</label>
-        <input id="dest" type="text" list="cityList" value="Doha" placeholder="ketik nama kota…" autocomplete="off" oninput="resolveCity('dest')">
-        <div class="tzread empty" id="tzreadDest"></div>
-        <div class="tzfallback" id="tzfallbackDest" style="display:none">
-          <label>Zona tak dikenal — pilih manual</label>
-          <select id="tzDest"></select>
-        </div>
+      <label>Home base <span class="opt">— kota tempat jam tubuhmu disetel</span></label>
+      <input id="origin" list="cities" value="Dubai" autocomplete="off" placeholder="ketik kota…" oninput="resolveCity('origin')">
+      <div class="zone" id="zoneOrigin"></div>
+      <div class="fallback" id="fbOrigin"><label class="mini">Zona tak dikenal — pilih manual</label><select id="tzOrigin"></select></div>
 
-        <datalist id="cityList"></datalist>
+      <label>Kota tujuan</label>
+      <input id="dest" list="cities" value="London" autocomplete="off" placeholder="ketik kota…" oninput="resolveCity('dest')">
+      <div class="zone" id="zoneDest"></div>
+      <div class="fallback" id="fbDest"><label class="mini">Zona tak dikenal — pilih manual</label><select id="tzDest"></select></div>
 
-        <label>Jam Berangkat <span class="hint">(waktu lokal asal)</span></label>
-        <input id="depTime" type="time" value="23:30">
+      <label>Tanggal &amp; jam berangkat <span class="opt">(waktu home base)</span></label>
+      <div class="two">
+        <input id="depDate" type="date">
+        <input id="depTime" type="time" value="09:30">
+      </div>
 
-        <label>Durasi Terbang</label>
-        <div class="row2 dur">
-          <div class="durbox"><input id="flightH" type="number" min="0" max="24" value="9"><span>jam</span></div>
-          <div class="durbox"><input id="flightM" type="number" min="0" max="59" step="5" value="30"><span>menit</span></div>
-        </div>
+      <label>Durasi terbang</label>
+      <div class="two">
+        <div class="durbox"><input id="flightH" type="number" min="0" max="24" value="7"><span>jam</span></div>
+        <div class="durbox"><input id="flightM" type="number" min="0" max="59" step="5" value="45"><span>mnt</span></div>
+      </div>
 
-        <label>Lama di Tujuan <span class="hint">(sampai terbang balik)</span></label>
-        <div class="row2 dur">
-          <div class="durbox"><input id="groundH" type="number" min="0" value="48"><span>jam</span></div>
-          <div class="durbox"><input id="groundM" type="number" min="0" max="59" step="5" value="0"><span>menit</span></div>
-        </div>
+      <label>Lama di tujuan <span class="opt">(sampai terbang balik)</span></label>
+      <div class="two">
+        <div class="durbox"><input id="groundH" type="number" min="0" value="48"><span>jam</span></div>
+        <div class="durbox"><input id="groundM" type="number" min="0" max="59" step="5" value="0"><span>mnt</span></div>
+      </div>
 
-        <label>Jam Bangun Biasa <span class="hint">opsional — default 07:00</span></label>
+      <button type="button" class="adv-toggle" id="advToggle" onclick="toggleAdv()"><span class="caret">▶</span>Opsi lanjutan</button>
+      <div class="adv-panel" id="advPanel">
+        <label class="mini">Jam bangun biasa <span class="opt">opsional — default 07:00</span></label>
         <input id="wakeTime" type="time" placeholder="07:00">
 
-        <button type="button" class="adv-toggle" onclick="toggleAdv()"><span class="caret" id="advCaret">▸</span>Opsi Lanjutan — Rencana Kegiatan</button>
-        <div id="advPanel" class="adv-panel">
-          <p class="adv-help">Ada jadwal tetap di tujuan (sarapan jam 8, pilates jam 12, keliling kota jam 10)? Tambahkan di sini — agenda bakal menyesuaikan di sekitarnya dan memperingatkan kalau bentrok jam tidur atau jam tubuh loyo. Semua pakai <strong>jam lokal tujuan</strong>.</p>
-          <div class="adv-form">
-            <div class="row2">
-              <div>
-                <label class="mini">Hari</label>
-                <select id="actDay">
-                  <option value="0">Hari 1</option><option value="1">Hari 2</option>
-                  <option value="2">Hari 3</option><option value="3">Hari 4</option>
-                </select>
-              </div>
-              <div>
-                <label class="mini">Jam (lokal)</label>
-                <input id="actTime" type="time" value="10:00">
-              </div>
-            </div>
-            <div class="row2">
-              <div>
-                <label class="mini">Jenis</label>
-                <select id="actType">
-                  <option value="meal">🍽️ Makan</option>
-                  <option value="sport">🏋️ Olahraga</option>
-                  <option value="tour">🗺️ Jalan-jalan</option>
-                  <option value="other">📌 Lainnya</option>
-                </select>
-              </div>
-              <div>
-                <label class="mini">Nama kegiatan</label>
-                <input id="actLabel" type="text" placeholder="mis. keliling kota">
-              </div>
-            </div>
-            <button type="button" class="adv-add" onclick="addActivity()">+ Tambah ke Rencana</button>
-          </div>
-          <div id="actList" class="act-list"></div>
+        <p class="adv-help" style="margin-top:1rem;">Punya acara tetap di tujuan? Tambahkan tanggal, jam lokal, dan catatan singkat. Agenda menyesuaikan di sekitarnya dan menandai kalau bentrok tidur atau jam tubuh loyo.</p>
+        <div class="two">
+          <div><label class="mini">Tanggal</label><input id="actDate" type="date"></div>
+          <div><label class="mini">Jam (lokal tujuan)</label><input id="actTime" type="time" value="10:00"></div>
         </div>
-
-        <button class="go" onclick="run()">Hitung Rencana Ritme →</button>
+        <label class="mini" style="margin-top:.6rem;">Catatan</label>
+        <input id="actRemark" type="text" placeholder="mis. keliling kota">
+        <button type="button" class="adv-add" onclick="addActivity()">Tambah ke rencana</button>
+        <div class="act-list" id="actList"></div>
       </div>
+
+      <button class="cta" onclick="run()">Susun agenda ritme</button>
+    </div>
+  </div>
+
+  <!-- ============ OUTPUT ============ -->
+  <div>
+    <div class="card empty" id="empty">
+      <div class="mk">✳</div>
+      Isi jadwal di samping, lalu tekan <b>Susun agenda ritme</b>.
     </div>
 
-    <!-- ===== RESULTS ===== -->
-    <div>
-      <div class="placeholder card" id="placeholder">
-        <div class="big">🧭</div>
-        Isi data penerbangan di samping,<br>lalu tekan <strong>Hitung Rencana Ritme</strong>.
+    <div id="out">
+      <div class="card">
+        <div class="verdict" id="verdict">
+          <div class="score" id="vScore">—</div>
+          <div><div class="vl">Beban jet lag</div><div class="vm" id="vMain">—</div></div>
+        </div>
+        <div class="stats" id="stats"></div>
       </div>
 
-      <div id="results">
-        <div class="card">
-          <div class="verdict" id="verdict">
-            <div class="score" id="vScore">—</div>
-            <div class="vtext">
-              <div class="vlabel">Beban Jet Lag</div>
-              <div class="vmain" id="vMain">—</div>
-            </div>
-          </div>
-          <div class="metrics" id="metrics"></div>
-        </div>
+      <div class="card pad">
+        <div class="sec-title">Agenda — mendarat sampai terbang lagi</div>
+        <div class="strat" id="strat"></div>
+        <div id="agenda"></div>
+      </div>
 
-        <div class="card card-pad" style="margin-top:1.4rem;">
-          <div class="section-h"><span class="num">01</span> Agenda: Mendarat → Terbang Lagi</div>
-          <div class="section-sub" id="agendaStrat"></div>
-          <div class="agenda" id="agenda"></div>
-        </div>
+      <div class="card pad">
+        <div class="sec-title">Peta ritme di tujuan</div>
+        <div class="sec-sub">Warna = kondisi tubuhmu per jam (waktu lokal tujuan), berdasarkan jam tubuh yang belum menyesuaikan.</div>
+        <div class="rbar" id="rbar"></div>
+        <div class="rlabels"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+        <div class="legend" id="legend"></div>
+      </div>
 
-        <div class="card card-pad" style="margin-top:1.4rem;">
-          <div class="section-h"><span class="num">02</span> Peta Ritme di Tujuan</div>
-          <div class="section-sub">Warna menunjukkan kondisi tubuhmu per jam (waktu lokal tujuan), berdasarkan jam tubuh yang belum sempat menyesuaikan.</div>
-          <div class="timeline" id="timeline"></div>
-        </div>
-
-        <div class="card card-pad" style="margin-top:1.4rem;">
-          <div class="section-h"><span class="num">03</span> Catatan Kesehatan</div>
-          <div id="healthNotes"></div>
-        </div>
-
-        <div class="disclaimer">
-          Model ini alat bantu edukasi berbasis prinsip two-process sleep model &amp; laju penyesuaian circadian (~1 jam/hari ke barat, ~1,5 jam/hari ke timur). Bukan pengganti fatigue risk management resmi maskapai maupun nasihat medis. Selalu ikuti aturan duty/rest airline-mu dan konsultasi tenaga kesehatan bila ada keluhan.
-        </div>
+      <div class="card pad">
+        <div class="sec-title">Catatan kesehatan</div>
+        <div id="notes" style="margin-top:.6rem;"></div>
+        <div class="disc">Alat bantu edukasi berbasis two-process sleep model, phase response curve cahaya, dan laju adaptasi sirkadian (~1 jam/hari ke barat, ~1,5 jam/hari ke timur). Bukan pengganti fatigue risk management maskapai atau nasihat medis. Ikuti aturan duty/rest maskapaimu.</div>
       </div>
     </div>
   </div>
-</main>
 
-<footer>
-  CrewSync — dibuat untuk awak kabin internasional · v1 prototype
-</footer>
+</div></div></main>
+
+<footer><div class="wrap">CrewSync — untuk awak kabin internasional · prototype</div></footer>
+
+<datalist id="cities"></datalist>
 
 <script>
-// ---------- City → IANA timezone database (offline, DST-aware via Intl) ----------
-const CITIES = {
-  // Indonesia
-  "Balikpapan":"Asia/Makassar","Jakarta":"Asia/Jakarta","Surabaya":"Asia/Jakarta",
-  "Denpasar":"Asia/Makassar","Bali":"Asia/Makassar","Makassar":"Asia/Makassar",
-  "Medan":"Asia/Jakarta","Manado":"Asia/Makassar","Yogyakarta":"Asia/Jakarta",
-  "Batam":"Asia/Jakarta","Jayapura":"Asia/Jayapura","Bandung":"Asia/Jakarta",
-  // Asia hubs
-  "Singapore":"Asia/Singapore","Kuala Lumpur":"Asia/Kuala_Lumpur","Bangkok":"Asia/Bangkok",
-  "Hong Kong":"Asia/Hong_Kong","Tokyo":"Asia/Tokyo","Osaka":"Asia/Tokyo","Seoul":"Asia/Seoul",
-  "Beijing":"Asia/Shanghai","Shanghai":"Asia/Shanghai","Guangzhou":"Asia/Shanghai",
-  "Taipei":"Asia/Taipei","Manila":"Asia/Manila","Ho Chi Minh City":"Asia/Ho_Chi_Minh",
-  "Hanoi":"Asia/Ho_Chi_Minh","Phnom Penh":"Asia/Phnom_Penh","Yangon":"Asia/Yangon",
-  "Colombo":"Asia/Colombo","Dhaka":"Asia/Dhaka","Kathmandu":"Asia/Kathmandu",
-  "New Delhi":"Asia/Kolkata","Delhi":"Asia/Kolkata","Mumbai":"Asia/Kolkata",
-  "Bengaluru":"Asia/Kolkata","Chennai":"Asia/Kolkata","Karachi":"Asia/Karachi",
-  "Islamabad":"Asia/Karachi","Almaty":"Asia/Almaty","Tashkent":"Asia/Tashkent",
-  // Middle East
-  "Doha":"Asia/Qatar","Dubai":"Asia/Dubai","Abu Dhabi":"Asia/Dubai","Riyadh":"Asia/Riyadh",
-  "Jeddah":"Asia/Riyadh","Kuwait":"Asia/Kuwait","Manama":"Asia/Bahrain","Muscat":"Asia/Muscat",
-  "Tehran":"Asia/Tehran","Amman":"Asia/Amman","Beirut":"Asia/Beirut","Baghdad":"Asia/Baghdad",
-  "Tel Aviv":"Asia/Jerusalem","Jerusalem":"Asia/Jerusalem",
-  // Europe
-  "London":"Europe/London","Paris":"Europe/Paris","Amsterdam":"Europe/Amsterdam",
-  "Frankfurt":"Europe/Berlin","Munich":"Europe/Berlin","Berlin":"Europe/Berlin",
-  "Zurich":"Europe/Zurich","Geneva":"Europe/Zurich","Rome":"Europe/Rome","Milan":"Europe/Rome",
-  "Madrid":"Europe/Madrid","Barcelona":"Europe/Madrid","Lisbon":"Europe/Lisbon",
-  "Brussels":"Europe/Brussels","Vienna":"Europe/Vienna","Copenhagen":"Europe/Copenhagen",
-  "Stockholm":"Europe/Stockholm","Oslo":"Europe/Oslo","Helsinki":"Europe/Helsinki",
-  "Athens":"Europe/Athens","Istanbul":"Europe/Istanbul","Moscow":"Europe/Moscow",
-  "Dublin":"Europe/Dublin","Warsaw":"Europe/Warsaw","Prague":"Europe/Prague","Budapest":"Europe/Budapest",
-  // Americas
-  "New York":"America/New_York","Newark":"America/New_York","Boston":"America/New_York",
-  "Washington":"America/New_York","Atlanta":"America/New_York","Miami":"America/New_York",
-  "Toronto":"America/Toronto","Chicago":"America/Chicago","Dallas":"America/Chicago",
-  "Houston":"America/Chicago","Denver":"America/Denver","Los Angeles":"America/Los_Angeles",
-  "San Francisco":"America/Los_Angeles","Seattle":"America/Los_Angeles","Vancouver":"America/Vancouver",
-  "Mexico City":"America/Mexico_City","Sao Paulo":"America/Sao_Paulo","Rio de Janeiro":"America/Sao_Paulo",
-  "Buenos Aires":"America/Argentina/Buenos_Aires","Lima":"America/Lima","Bogota":"America/Bogota",
-  "Santiago":"America/Santiago",
-  // Oceania
-  "Sydney":"Australia/Sydney","Melbourne":"Australia/Melbourne","Brisbane":"Australia/Brisbane",
-  "Perth":"Australia/Perth","Auckland":"Pacific/Auckland","Wellington":"Pacific/Auckland",
-  "Nadi":"Pacific/Fiji","Honolulu":"Pacific/Honolulu","Guam":"Pacific/Guam",
-  // Africa & Indian Ocean
-  "Cairo":"Africa/Cairo","Johannesburg":"Africa/Johannesburg","Cape Town":"Africa/Johannesburg",
-  "Nairobi":"Africa/Nairobi","Addis Ababa":"Africa/Addis_Ababa","Lagos":"Africa/Lagos",
-  "Casablanca":"Africa/Casablanca","Accra":"Africa/Accra","Male":"Indian/Maldives",
-  "Mauritius":"Indian/Mauritius"
+/* ============ City → IANA timezone (offline, DST-aware) ============ */
+const CITIES={
+ "Dubai":"Asia/Dubai","Abu Dhabi":"Asia/Dubai","Doha":"Asia/Qatar","Riyadh":"Asia/Riyadh","Jeddah":"Asia/Riyadh",
+ "Kuwait":"Asia/Kuwait","Manama":"Asia/Bahrain","Muscat":"Asia/Muscat","Tehran":"Asia/Tehran","Amman":"Asia/Amman",
+ "Beirut":"Asia/Beirut","Baghdad":"Asia/Baghdad","Tel Aviv":"Asia/Jerusalem","Cairo":"Africa/Cairo",
+ "Balikpapan":"Asia/Makassar","Jakarta":"Asia/Jakarta","Surabaya":"Asia/Jakarta","Denpasar":"Asia/Makassar",
+ "Bali":"Asia/Makassar","Makassar":"Asia/Makassar","Medan":"Asia/Jakarta","Manado":"Asia/Makassar",
+ "Singapore":"Asia/Singapore","Kuala Lumpur":"Asia/Kuala_Lumpur","Bangkok":"Asia/Bangkok","Hong Kong":"Asia/Hong_Kong",
+ "Tokyo":"Asia/Tokyo","Osaka":"Asia/Tokyo","Seoul":"Asia/Seoul","Beijing":"Asia/Shanghai","Shanghai":"Asia/Shanghai",
+ "Guangzhou":"Asia/Shanghai","Taipei":"Asia/Taipei","Manila":"Asia/Manila","Ho Chi Minh City":"Asia/Ho_Chi_Minh",
+ "Hanoi":"Asia/Ho_Chi_Minh","Phnom Penh":"Asia/Phnom_Penh","Yangon":"Asia/Yangon","Colombo":"Asia/Colombo",
+ "Dhaka":"Asia/Dhaka","Kathmandu":"Asia/Kathmandu","New Delhi":"Asia/Kolkata","Delhi":"Asia/Kolkata",
+ "Mumbai":"Asia/Kolkata","Bengaluru":"Asia/Kolkata","Chennai":"Asia/Kolkata","Karachi":"Asia/Karachi",
+ "Islamabad":"Asia/Karachi","Almaty":"Asia/Almaty","Tashkent":"Asia/Tashkent",
+ "London":"Europe/London","Paris":"Europe/Paris","Amsterdam":"Europe/Amsterdam","Frankfurt":"Europe/Berlin",
+ "Munich":"Europe/Berlin","Berlin":"Europe/Berlin","Zurich":"Europe/Zurich","Geneva":"Europe/Zurich",
+ "Rome":"Europe/Rome","Milan":"Europe/Rome","Madrid":"Europe/Madrid","Barcelona":"Europe/Madrid",
+ "Lisbon":"Europe/Lisbon","Brussels":"Europe/Brussels","Vienna":"Europe/Vienna","Copenhagen":"Europe/Copenhagen",
+ "Stockholm":"Europe/Stockholm","Oslo":"Europe/Oslo","Helsinki":"Europe/Helsinki","Athens":"Europe/Athens",
+ "Istanbul":"Europe/Istanbul","Moscow":"Europe/Moscow","Dublin":"Europe/Dublin","Warsaw":"Europe/Warsaw",
+ "Prague":"Europe/Prague","Budapest":"Europe/Budapest",
+ "New York":"America/New_York","Boston":"America/New_York","Washington":"America/New_York","Miami":"America/New_York",
+ "Toronto":"America/Toronto","Chicago":"America/Chicago","Dallas":"America/Chicago","Houston":"America/Chicago",
+ "Denver":"America/Denver","Los Angeles":"America/Los_Angeles","San Francisco":"America/Los_Angeles",
+ "Seattle":"America/Los_Angeles","Vancouver":"America/Vancouver","Mexico City":"America/Mexico_City",
+ "Sao Paulo":"America/Sao_Paulo","Rio de Janeiro":"America/Sao_Paulo","Buenos Aires":"America/Argentina/Buenos_Aires",
+ "Lima":"America/Lima","Bogota":"America/Bogota","Santiago":"America/Santiago",
+ "Sydney":"Australia/Sydney","Melbourne":"Australia/Melbourne","Brisbane":"Australia/Brisbane","Perth":"Australia/Perth",
+ "Auckland":"Pacific/Auckland","Nadi":"Pacific/Fiji","Honolulu":"Pacific/Honolulu",
+ "Johannesburg":"Africa/Johannesburg","Cape Town":"Africa/Johannesburg","Nairobi":"Africa/Nairobi",
+ "Addis Ababa":"Africa/Addis_Ababa","Lagos":"Africa/Lagos","Casablanca":"Africa/Casablanca","Accra":"Africa/Accra",
+ "Male":"Indian/Maldives","Mauritius":"Indian/Mauritius"
 };
-// lowercase lookup index
-const CITY_LC = {};
-Object.keys(CITIES).forEach(k => CITY_LC[k.toLowerCase()] = CITIES[k]);
-// datalist
-(function(){
-  const dl = document.getElementById('cityList');
-  Object.keys(CITIES).sort().forEach(c => {
-    const o = document.createElement('option'); o.value = c; dl.appendChild(o);
-  });
-})();
+const CITY_LC={};Object.keys(CITIES).forEach(k=>CITY_LC[k.toLowerCase()]=CITIES[k]);
+(function(){const dl=document.getElementById('cities');Object.keys(CITIES).sort().forEach(c=>{const o=document.createElement('option');o.value=c;dl.appendChild(o);});})();
+for(let z=-12;z<=14;z++){['tzOrigin','tzDest'].forEach(id=>{const s=document.getElementById(id);const o=document.createElement('option');o.value=z;o.textContent=(z>=0?'UTC+':'UTC')+z;s.appendChild(o);});}
 
-// resolved state
-const resolved = { origin: null, dest: null };
+/* ============ helpers ============ */
+const pad=n=>String(n).padStart(2,'0');
+function fmt(hf){let x=((hf%24)+24)%24;const h=Math.floor(x);let m=Math.round((x-h)*60);if(m===60)return pad((h+1)%24)+':00';return pad(h)+':'+pad(m);}
+function fmtDur(h){const H=Math.floor(h);const M=Math.round((h-H)*60);return H+'j'+(M?' '+M+'m':'');}
+function parseTime(s){const[h,m]=s.split(':').map(Number);return h+m/60;}
+function inCirc(x,a,b){x=((x%24)+24)%24;a=((a%24)+24)%24;b=((b%24)+24)%24;return a<=b?(x>=a&&x<=b):(x>=a||x<=b);}
+function alertness(bh){const x=((bh%24)+24)%24;const p=Math.cos((x-16)/24*2*Math.PI);const d=-0.28*Math.exp(-Math.pow((x-15)/2.2,2));return Math.max(0,Math.min(1,0.5+0.5*p+d));}
+function condColor(a){if(a>=0.62)return{c:'var(--good)',l:'Segar'};if(a>=0.40)return{c:'var(--mid)',l:'Sedang'};return{c:'var(--low)',l:'Loyo (WOCL)'};}
+function getOffset(iana){try{const s=new Intl.DateTimeFormat('en-US',{timeZone:iana,timeZoneName:'shortOffset'}).formatToParts(new Date()).find(p=>p.type==='timeZoneName').value;const m=s.match(/GMT([+-]\d{1,2})(?::(\d{2}))?/);if(!m)return 0;const h=parseInt(m[1]);const mm=m[2]?parseInt(m[2]):0;return h+Math.sign(h)*(mm/60);}catch(e){return 0;}}
+function fmtUTC(o){const sg=o>=0?'+':'−';const a=Math.abs(o);const h=Math.floor(a);const m=Math.round((a-h)*60);return 'UTC'+sg+h+(m?':'+pad(m):'');}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+const DAYS=['Min','Sen','Sel','Rab','Kam','Jum','Sab'],MONS=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 
-function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
-
-function lookupCity(q){
-  if(!q) return null;
-  const key = q.trim().toLowerCase();
-  if(CITY_LC[key]) return { iana: CITY_LC[key], exact: true };
-  const hit = Object.keys(CITY_LC).find(k => k.startsWith(key));
-  return hit ? { iana: CITY_LC[hit], exact: false } : null;
-}
-
-// DST-aware offset (hours) for an IANA zone, computed by browser for "now"
-function getOffset(iana){
-  try {
-    const s = new Intl.DateTimeFormat('en-US', { timeZone: iana, timeZoneName: 'shortOffset' })
-      .formatToParts(new Date()).find(p => p.type === 'timeZoneName').value;
-    const m = s.match(/GMT([+-]\d{1,2})(?::(\d{2}))?/);
-    if(!m) return 0;
-    const h = parseInt(m[1]);
-    const mm = m[2] ? parseInt(m[2]) : 0;
-    return h + Math.sign(h) * (mm/60);
-  } catch(e){ return 0; }
-}
-
-function fmtUTC(o){
-  const sign = o >= 0 ? '+' : '−';
-  const a = Math.abs(o); const h = Math.floor(a); const m = Math.round((a-h)*60);
-  return 'UTC' + sign + h + (m ? ':' + pad(m) : '');
-}
-
+/* ============ timezone resolve ============ */
+const resolved={origin:null,dest:null};
+function lookupCity(q){if(!q)return null;const k=q.trim().toLowerCase();if(CITY_LC[k])return CITY_LC[k];const h=Object.keys(CITY_LC).find(x=>x.startsWith(k));return h?CITY_LC[h]:null;}
 function resolveCity(which){
-  const val = document.getElementById(which).value;
-  const found = lookupCity(val);
-  const readEl = document.getElementById('tzread' + cap(which));
-  const fbEl = document.getElementById('tzfallback' + cap(which));
-  if(found){
-    const off = getOffset(found.iana);
-    resolved[which] = { tz: off, iana: found.iana };
-    const place = found.iana.split('/').pop().replace(/_/g,' ');
-    readEl.className = 'tzread ok';
-    readEl.innerHTML = '✓ Zona: <strong>' + fmtUTC(off) + '</strong> · ' + place;
-    fbEl.style.display = 'none';
-  } else if(val.trim() === ''){
-    resolved[which] = null;
-    readEl.className = 'tzread empty';
-    fbEl.style.display = 'none';
-  } else {
-    resolved[which] = null;
-    readEl.className = 'tzread warn';
-    readEl.innerHTML = '✎ Kota belum ada di daftar — pilih zona manual di bawah.';
-    fbEl.style.display = 'block';
-  }
+  const v=document.getElementById(which).value;
+  const iana=lookupCity(v);
+  const zone=document.getElementById('zone'+cap(which));
+  const fb=document.getElementById('fb'+cap(which));
+  if(iana){const off=getOffset(iana);resolved[which]={tz:off,iana};
+    zone.className='zone ok';zone.innerHTML='✓ Zona <b>'+fmtUTC(off)+'</b> · '+iana.split('/').pop().replace(/_/g,' ');fb.style.display='none';}
+  else if(v.trim()===''){resolved[which]=null;zone.className='zone';zone.innerHTML='';fb.style.display='none';}
+  else{resolved[which]=null;zone.className='zone warn';zone.innerHTML='Kota belum terdaftar — pilih zona manual.';fb.style.display='block';}
 }
+function getTz(which){if(resolved[which])return resolved[which].tz;const fb=document.getElementById('fb'+cap(which));if(fb.style.display==='block')return parseInt(document.getElementById('tz'+cap(which)).value);return null;}
 
-function getResolvedTz(which){
-  if(resolved[which]) return resolved[which].tz;
-  const sel = document.getElementById('tz' + cap(which));
-  const fbVisible = document.getElementById('tzfallback' + cap(which)).style.display !== 'none';
-  return fbVisible && sel ? parseInt(sel.value) : null;
-}
-
-// ---------- Advanced: user-planned activities ----------
-let activities = [];
-function actIcon(t){ return { meal:'🍽️', sport:'🏋️', tour:'🗺️', other:'📌' }[t] || '📌'; }
-function toggleAdv(){
-  const p = document.getElementById('advPanel');
-  const c = document.getElementById('advCaret');
-  const open = p.style.display === 'block';
-  p.style.display = open ? 'none' : 'block';
-  c.textContent = open ? '▸' : '▾';
-}
+/* ============ advanced activities ============ */
+let activities=[];
+function toggleAdv(){const p=document.getElementById('advPanel'),t=document.getElementById('advToggle');const open=p.classList.toggle('open');t.classList.toggle('open',open);}
 function addActivity(){
-  const day = parseInt(document.getElementById('actDay').value);
-  const timeStr = document.getElementById('actTime').value;
-  const type = document.getElementById('actType').value;
-  const label = document.getElementById('actLabel').value.trim();
-  if(!timeStr){ alert('Isi jam kegiatan dulu.'); return; }
-  if(!label){ alert('Isi nama kegiatan dulu.'); return; }
-  activities.push({ day, time: parseTime(timeStr), timeStr, type, label });
-  document.getElementById('actLabel').value = '';
-  renderActList();
+  const date=document.getElementById('actDate').value;
+  const timeStr=document.getElementById('actTime').value;
+  const remark=document.getElementById('actRemark').value.trim();
+  if(!date){alert('Pilih tanggal kegiatan.');return;}
+  if(!timeStr){alert('Isi jam kegiatan.');return;}
+  if(!remark){alert('Isi catatan kegiatan.');return;}
+  activities.push({date,time:parseTime(timeStr),timeStr,remark});
+  document.getElementById('actRemark').value='';
+  renderActs();
 }
-function removeActivity(i){ activities.splice(i,1); renderActList(); }
-function renderActList(){
-  const el = document.getElementById('actList');
-  if(!activities.length){ el.innerHTML = ''; return; }
-  const sorted = activities.map((a,i) => ({...a, _i:i})).sort((x,y) => x.day - y.day || x.time - y.time);
-  el.innerHTML = sorted.map(a =>
-    `<div class="act-item">
-       <span class="act-ic">${actIcon(a.type)}</span>
-       <span class="act-txt"><strong>${a.label}</strong><span class="act-meta">Hari ${a.day+1} · ${a.timeStr}</span></span>
-       <button class="act-del" onclick="removeActivity(${a._i})" title="Hapus">✕</button>
-     </div>`).join('');
+function removeActivity(i){activities.splice(i,1);renderActs();}
+function renderActs(){
+  const el=document.getElementById('actList');
+  if(!activities.length){el.innerHTML='';return;}
+  const s=activities.map((a,i)=>({...a,_i:i})).sort((x,y)=>x.date<y.date?-1:x.date>y.date?1:x.time-y.time);
+  el.innerHTML=s.map(a=>{const d=new Date(a.date+'T00:00');const dl=DAYS[d.getDay()]+' '+d.getDate()+' '+MONS[d.getMonth()];
+    return '<div class="act-item"><span class="txt"><b>'+a.remark+'</b><small>'+dl+' · '+a.timeStr+'</small></span><button class="act-del" onclick="removeActivity('+a._i+')">✕</button></div>';}).join('');
 }
 
-// ---------- Timezone options ----------
-const TZ = [];
-for (let i = -12; i <= 14; i++) TZ.push(i);
-function fillTz(sel, def) {
-  const el = document.getElementById(sel);
-  TZ.forEach(z => {
-    const o = document.createElement('option');
-    o.value = z;
-    o.textContent = (z >= 0 ? 'UTC+' : 'UTC') + z;
-    if (z === def) o.selected = true;
-    el.appendChild(o);
+/* ============ CORE: coherent agenda generator ============ */
+function buildAgenda(P,overrides){
+  overrides=overrides||{};
+  const {delta,ground,wake,eastward,shortStay,origin,dest,arriveLocal}=P;
+  const absDelta=Math.abs(delta);
+  const localAtZero=((arriveLocal%24)+24)%24, bodyAtZero=((arriveLocal-delta)%24+24)%24;
+  const clockZero=shortStay?bodyAtZero:localAtZero;
+  let bedClock,wakeClock;const sleepNeed=8;
+  if(shortStay){wakeClock=wake;bedClock=((wake-8)%24+24)%24;}else{wakeClock=7;bedClock=23;}
+  const CBTmin=((wake-2)%24+24)%24;
+  const doLight=(!shortStay&&absDelta>=2);
+  const seek=eastward?[CBTmin,CBTmin+6]:[CBTmin-6,CBTmin];
+  const avoid=eastward?[CBTmin-6,CBTmin]:[CBTmin,CBTmin+6];
+
+  const ev=[];
+  const add=(t,type,ic,ti,de,ex)=>{if(t>=-0.01&&t<=ground+0.01)ev.push(Object.assign({t,type,ic,ti,de},ex||{}));};
+  const tOf=(c,after)=>{let t=(((c-clockZero)%24)+24)%24;while(t<(after??-0.001))t+=24;return t;};
+  const inSleep=c=>inCirc(c,bedClock,wakeClock-0.001);
+  const bAt=t=>bodyAtZero+t, lAt=t=>localAtZero+t;
+  const mealName=h=>{h=((h%24)+24)%24;return h>=4&&h<11?'Sarapan':h>=11&&h<16?'Makan siang':h>=16&&h<22.5?'Makan malam':'Camilan';};
+
+  add(0,'land','🛬','Mendarat di '+dest,'Setel jam ke waktu '+dest+'. Lokal '+fmt(localAtZero)+' · jam tubuh '+fmt(bodyAtZero)+'.');
+
+  // ---- sequential sleep episodes (honoring actual overrides, then auto-adjusting downstream) ----
+  const sleeps=[]; // {start,end,ep,actual}
+  const arrivedNight=inSleep(clockZero);
+  let cursor, ep=0;
+  if(arrivedNight){
+    let s,e;
+    if(overrides[ep]){s=overrides[ep].start;e=overrides[ep].end;}
+    else{e=tOf(wakeClock,0.001);s=Math.max(0.25,Math.min(1.0,e-8));}
+    sleeps.push({start:s,end:Math.min(e,ground),ep,actual:!!overrides[ep]});
+    cursor=Math.min(e,ground); ep++;
+  } else cursor=0;
+  while(ep<16){
+    let s,e;
+    if(overrides[ep]){s=overrides[ep].start;e=overrides[ep].end;}
+    else{s=tOf(bedClock,cursor+0.2);e=Math.min(s+sleepNeed,ground);}
+    if(s>=ground-0.1) break;
+    sleeps.push({start:s,end:Math.min(e,ground),ep,actual:!!overrides[ep]});
+    cursor=Math.min(e,ground); ep++;
+    if(cursor>=ground-0.1) break;
+  }
+  sleeps.forEach(sl=>{
+    const dur=sl.end-sl.start;
+    add(sl.start,'sleep','🛌',(sl.actual?'Tidur aktual':'Tidur')+' (± '+dur.toFixed(1)+' jam)',
+      'Sampai ~'+fmt(lAt(sl.end))+' lokal. '+(sl.actual?'Dari jam tidur yang kamu catat — jadwal setelahnya menyesuaikan.':'Kamar gelap, sejuk, sunyi.'),
+      {dur,ep:sl.ep,actual:sl.actual});
   });
-}
-fillTz('tzOrigin', 8);  // Balikpapan WITA (fallback only)
-fillTz('tzDest', 3);    // Doha (fallback only)
 
-// resolve default cities on load
-resolveCity('origin');
-resolveCity('dest');
+  // ---- awake windows ----
+  const wakePoints=[];if(!arrivedNight)wakePoints.push(0);
+  sleeps.forEach(sl=>{if(sl.end<ground-0.05)wakePoints.push(sl.end);});
 
-// ---------- Helpers ----------
-function pad(n){ return String(n).padStart(2,'0'); }
-function fmt(hourFloat) {
-  let h = ((hourFloat % 24) + 24) % 24;
-  const hh = Math.floor(h);
-  const mm = Math.round((h - hh) * 60);
-  if (mm === 60) return pad((hh+1)%24) + ':00';
-  return pad(hh) + ':' + pad(mm);
-}
-function parseTime(str){ const [h,m] = str.split(':').map(Number); return h + m/60; }
-function fmtDur(h){ const H = Math.floor(h); const M = Math.round((h - H) * 60); return H + 'j' + (M ? ' ' + M + 'm' : ''); }
+  wakePoints.forEach(ws=>{
+    const nbS=sleeps.find(sl=>sl.start>ws+0.05);const hasSleep=!!nbS;
+    const nb=hasSleep?nbS.start:ground;const len=nb-ws;if(len<0.5)return;
+    const isArr=(ws===0&&!arrivedNight);
+    if(!isArr)add(ws,'wake','☀️','Bangun','Jam tubuh '+fmt(bAt(ws))+'. Bergerak & cari cahaya.');
 
-// Circadian "condition" for a given body-clock hour (0-24).
-// Lowest at ~4-5am (WOCL - window of circadian low), also a dip ~14-16.
-// Returns 0..1 (1 = most alert).
-function alertness(bodyHour) {
-  const h = ((bodyHour % 24) + 24) % 24;
-  // primary trough centered ~4.5, secondary dip ~15
-  const primary = Math.cos((h - 16) / 24 * 2 * Math.PI); // peak ~16, trough ~4
-  const dip = -0.28 * Math.exp(-Math.pow((h - 15)/2.2, 2)); // post-lunch dip
-  let a = 0.5 + 0.5 * primary + dip;
-  return Math.max(0, Math.min(1, a));
-}
+    const cand=[ws+(isArr?0.5:1.0)];
+    if(len>7)cand.push(ws+len*0.45);
+    cand.push(hasSleep?nb-3.5:ws+len*0.8);
+    const meals=[];cand.sort((a,b)=>a-b).forEach(t=>{if(t<ws+0.3||t>nb-0.6)return;if(meals.length&&t-meals[meals.length-1]<3.3)return;meals.push(t);});
+    meals.forEach(t=>add(t,'meal','🍽️',mealName(lAt(t)),'Jam makan konsisten jadi sinyal (zeitgeber) buat jam tubuh.'));
 
-function condColor(a) {
-  if (a >= 0.62) return { c: '#4a7c59', label: 'Segar' };
-  if (a >= 0.40) return { c: '#c98a2b', label: 'Sedang' };
-  return { c: '#b5573f', label: 'Loyo (WOCL)' };
-}
-
-// ---------- Main ----------
-function run() {
-  const tzO = getResolvedTz('origin');
-  const tzD = getResolvedTz('dest');
-  if(tzO === null || tzD === null){
-    alert('Lengkapi kota asal & tujuan dulu (atau pilih zona manual kalau kotanya belum terdaftar).');
-    return;
-  }
-  const origin = document.getElementById('origin').value || 'Asal';
-  const dest = document.getElementById('dest').value || 'Tujuan';
-  const dep = parseTime(document.getElementById('depTime').value);
-  const flight = (parseFloat(document.getElementById('flightH').value)||0) + (parseFloat(document.getElementById('flightM').value)||0)/60;
-  const ground = (parseFloat(document.getElementById('groundH').value)||0) + (parseFloat(document.getElementById('groundM').value)||0)/60;
-  const wakeRaw = document.getElementById('wakeTime').value;
-  const wake = wakeRaw ? parseTime(wakeRaw) : 7.0;
-
-  const delta = tzD - tzO;                 // + = east (maju), - = west (mundur)
-  const absDelta = Math.abs(delta);
-  const eastward = delta > 0;
-
-  // Adjustment rate: ~1h/day west, ~1.5h/day east
-  const rate = eastward ? 1.5 : 1.0;
-  const daysToAdjust = absDelta / rate;
-
-  // Local arrival time at destination
-  // depart local origin -> arrive local dest = dep + flight + delta
-  const arriveLocal = dep + flight + delta;
-
-  // Body clock offset while at destination (before adjustment):
-  // bodyHour = localDestHour - delta  (tubuh masih pakai jam asal)
-  // We'll compute per hour for the timeline.
-
-  // Jet lag load score (0-100). Bigger delta + east + short ground = worse.
-  let load = absDelta * 8;
-  if (eastward) load *= 1.15;
-  // short ground relative to needed adjustment adds strain
-  const groundDays = ground / 24;
-  if (groundDays < daysToAdjust) load += (daysToAdjust - groundDays) * 6;
-  // red-eye departure penalty (departing during body night 22-06)
-  if (dep >= 22 || dep < 6) load += 6;
-  load = Math.min(100, Math.round(load));
-
-  // ---------- Verdict ----------
-  const vEl = document.getElementById('verdict');
-  const vScore = document.getElementById('vScore');
-  const vMain = document.getElementById('vMain');
-  vScore.textContent = load;
-  let vClass, vText;
-  if (load < 30) { vClass='good'; vText='Ringan — tubuh cepat pulih'; }
-  else if (load < 60) { vClass='mid'; vText='Sedang — butuh strategi tidur & makan'; }
-  else { vClass='bad'; vText='Berat — prioritaskan recovery'; }
-  vEl.className = 'verdict ' + vClass;
-  vMain.textContent = vText;
-
-  // ---------- Metrics ----------
-  const dirTag = eastward
-    ? '<span class="tag east">ke timur</span>'
-    : '<span class="tag west">ke barat</span>';
-  const metrics = [
-    { l:'Selisih Zona', v: (delta>=0?'+':'') + delta, u:' jam ' + dirTag, note: eastward?'arah maju (lebih berat)':'arah mundur (lebih ringan)' },
-    { l:'Tiba di '+dest, v: fmt(arriveLocal), u:' lokal', note: 'jam tubuh: ' + fmt(arriveLocal - delta) },
-    { l:'Lama Layover', v: fmtDur(ground), u:'', note: (ground/24).toFixed(1)+' hari' },
-    { l:'Adaptasi Penuh', v: daysToAdjust.toFixed(1), u:' hari', note: '~'+rate+' jam/hari' },
-  ];
-  document.getElementById('metrics').innerHTML = metrics.map(m =>
-    `<div class="metric">
-       <div class="mlabel">${m.l}</div>
-       <div class="mval">${m.v}<span class="unit">${m.u}</span></div>
-       <div class="mnote">${m.note}</div>
-     </div>`).join('');
-
-  // ---------- Timeline (24h at destination, local) ----------
-  // condition based on UN-adjusted body clock at arrival
-  let tlBar = '', tlLegendSet = {};
-  for (let h = 0; h < 24; h++) {
-    const bodyH = h - delta;            // local dest hour -> body(origin) hour
-    const a = alertness(bodyH);
-    const cc = condColor(a);
-    tlLegendSet[cc.label] = cc.c;
-    tlBar += `<div class="tl-seg" style="flex:1;background:${cc.c};" title="${fmt(h)} lokal · kondisi ${cc.label}"></div>`;
-  }
-  document.getElementById('timeline').innerHTML =
-    `<div class="tl-bar">${tlBar}</div>
-     <div class="tl-labels"><span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span></div>
-     <div class="tl-legend">` +
-     Object.entries(tlLegendSet).map(([lab,c]) =>
-       `<span><i class="swatch" style="background:${c}"></i>${lab}</span>`).join('') +
-     `</div>`;
-
-  // ---------- Agenda: chronological plan from landing to next departure ----------
-  // Strategy: short layover / small delta -> anchor to HOME rhythm; else shift to LOCAL.
-  const shortStay = ground < 48 || absDelta <= 2;
-
-  const localAtZero = ((arriveLocal % 24) + 24) % 24;      // local dest clock at t=0 (landing)
-  const bodyAtZero  = ((arriveLocal - delta) % 24 + 24) % 24; // body(home) clock at t=0
-
-  const events = [];
-  const addEv = (t, type, icon, title, desc, extra) => {
-    if (t >= -0.01 && t <= ground + 0.01) events.push(Object.assign({ t, type, icon, title, desc }, extra || {}));
-  };
-  // repeat an event every 24h across the whole layover window
-  function cycle(clockZero, target, make) {
-    let base = (((target - clockZero) % 24) + 24) % 24;
-    for (let t = base; t <= ground + 0.01; t += 24) if (t >= -0.01) make(t);
-  }
-
-  // Landing marker
-  addEv(0, 'land', '🛬', `Mendarat di ${dest}`, `Sekarang jam lokal ${fmt(localAtZero)}, jam tubuhmu ${fmt(bodyAtZero)}. Setel jam tanganmu ke waktu ${dest}.`);
-
-  const agendaStratEl = document.getElementById('agendaStrat');
-
-  if (shortStay) {
-    agendaStratEl.innerHTML = `<strong>Strategi: jangkar ke jam rumah (${origin}).</strong> Layover pendek / selisih kecil — lebih hemat menjaga ritme tubuh tetap di ${origin} daripada memaksa adaptasi lalu balik lagi. Jam di bawah = waktu lokal ${dest}; angka kecil = jam tubuhmu.`;
-    const sleepDur = (((wake - 22) % 24) + 24) % 24 || 7.5; // body 22:00 -> wake
-    cycle(bodyAtZero, 22, t => {
-      const endLocal = fmt(localAtZero + t + sleepDur);
-      addEv(t, 'sleep', '🛏️', `Tidur utama (± ${sleepDur.toFixed(1)} jam)`, `Sampai ~${endLocal} lokal. Ini malam versi jam tubuhmu — pakai eye-mask & earplug kalau di luar masih terang.`, { dur: sleepDur });
-    });
-    cycle(bodyAtZero, wake, t => addEv(t, 'wake', '⏰', 'Bangun', 'Jam bangun normalmu. Buka tirai / cari cahaya kalau di tujuan sudah pagi juga.'));
-    cycle(bodyAtZero, wake + 0.75, t => addEv(t, 'meal', '🍳', 'Sarapan', 'Protein + air. Porsi normal.'));
-    cycle(bodyAtZero, 12.5, t => addEv(t, 'meal', '🥗', 'Makan siang', 'Porsi utama hari ini.'));
-    cycle(bodyAtZero, 18.5, t => addEv(t, 'meal', '🍽️', 'Makan malam', 'Selesai sebelum jam tubuh lewat 21:00 biar pencernaan tenang saat tidur.'));
-    cycle(bodyAtZero, 14.5, t => addEv(t, 'caf', '☕', 'Kafein terakhir', 'Stop kopi/teh setelah ini (± 8 jam sebelum tidur).'));
-  } else {
-    agendaStratEl.innerHTML = `<strong>Strategi: geser ke jam lokal (${dest}).</strong> Layover cukup panjang — worth menyesuaikan ke ritme ${dest} supaya bisa berfungsi normal. Jam di bawah = waktu lokal ${dest}; angka kecil = jam tubuhmu.`;
-    cycle(localAtZero, 23, t => addEv(t, 'sleep', '🛏️', 'Tidur utama (± 8 jam)', `Sampai ~${fmt(localAtZero + t + 8)} lokal. Target malam lokal ${dest}. Malam pertama bisa terpecah — itu wajar.`, { dur: 8 }));
-    cycle(localAtZero, 7, t => addEv(t, 'wake', '⏰', 'Bangun', 'Ikut pagi lokal. Langsung cari cahaya terang.'));
-    cycle(localAtZero, 7.5, t => addEv(t, 'meal', '🍳', 'Sarapan lokal', 'Protein + cahaya pagi = sinyal kuat "ini pagi".'));
-    if (eastward) {
-      cycle(localAtZero, 8.5, t => addEv(t, 'light', '🌅', 'Cari cahaya pagi', 'Arah timur: 30–60 mnt cahaya terang memajukan jam tubuh. Hindari cahaya terang larut malam.'));
-    } else {
-      cycle(localAtZero, 17, t => addEv(t, 'light', '🌆', 'Cari cahaya sore', 'Arah barat: cahaya sore memundurkan jam tubuh agar melek lebih lama.'));
+    if(doLight){
+      for(let t=ws;t<=nb-0.3;t+=0.25){if(inCirc(bAt(t),seek[0],seek[1])&&lAt(t)%24>=6.5&&lAt(t)%24<=21){add(t,'light','🔆',eastward?'Cari cahaya terang':'Cari cahaya sore',eastward?'Cahaya sesudah nadir suhu tubuh memajukan ritme (arah timur). 30–60 mnt di luar.':'Cahaya jelang malam menunda ritme (arah barat).');break;}}
+      for(let t=ws;t<=nb-0.3;t+=0.25){if(inCirc(bAt(t),avoid[0],avoid[1])&&lAt(t)%24>=6.5&&lAt(t)%24<=19){add(t,'avoid','🕶️','Hindari cahaya terang','Pakai kacamata gelap — cahaya di jam ini menggeser ritme ke arah yang salah.');break;}}
     }
-    cycle(localAtZero, 12.5, t => addEv(t, 'meal', '🥗', 'Makan siang lokal', 'Porsi utama saat tubuh masih beradaptasi.'));
-    cycle(localAtZero, 19, t => addEv(t, 'meal', '🍲', 'Makan malam lokal', 'Ringan & lebih awal; hindari begadang dengan perut penuh.'));
-    cycle(localAtZero, 15, t => addEv(t, 'caf', '☕', 'Kafein terakhir', '± 8 jam sebelum tidur lokal.'));
-  }
 
-  // Pre-duty prep + return departure
-  if (ground - 2.5 > 0.5) {
-    addEv(ground - 2.5, 'prep', '🎒', 'Siap-siap duty balik', 'Bangun (kalau masih tidur), mandi, makan ringan, hidrasi, dan lapor sesuai aturan maskapai.');
-  }
-  addEv(ground, 'depart', '🛫', `Terbang balik ke ${origin}`, 'Mulai perjalanan pulang. Ingat WOCL: titik terloyo tubuh ada di sekitar jam tubuh 03:00–05:00.');
+    if(hasSleep){
+      const caf=nb-8;
+      if(caf>ws+0.5)add(caf,'caf','☕','Kafein terakhir','Kafein bertahan ~6 jam di tubuh. Stop sekarang demi kualitas tidur.');
+      else if(!isArr)add(ws+0.25,'caf','☕','Tanpa kafein','Sisa waktu melek <8 jam sebelum tidur — lewati kopi.');
+      if(nb-0.5>ws+1)add(nb-0.5,'wind','🌙','Wind-down','Redupkan lampu, jauhi layar, siapkan tidur.');
+    }
+  });
 
-  // ---- merge user-planned activities ----
-  const skipped = [];
-  activities.forEach(act => {
-    const t = act.day * 24 + act.time - localAtZero;
-    if (t < -0.01 || t > ground + 0.01) { skipped.push(act); return; }
-    const a = alertness(bodyAtZero + t);
-    // a planned meal replaces nearby auto meals to avoid duplicates
-    if (act.type === 'meal') {
-      for (let i = events.length - 1; i >= 0; i--) {
-        if (events[i].type === 'meal' && !events[i].plan && Math.abs(events[i].t - t) < 2.5) events.splice(i, 1);
+  if(ground-2.5>0.5)add(ground-2.5,'prep','🎒','Siap duty balik','Mandi, makan ringan, hidrasi, lapor sesuai aturan maskapai.');
+  add(ground,'depart','🛫','Terbang balik ke '+origin,'WOCL (titik terloyo) ada di jam tubuh 03:00–05:00 — ekstra hati-hati.');
+
+  return {ev,localAtZero,bodyAtZero};
+}
+
+/* ============ agenda render + actual-sleep adjustment ============ */
+let RUN=null, overrides={}, editingEp=null, EP_T={};
+
+function nearestT(clock,anchor){const laz=RUN.localAtZero;let t=((clock-laz)%24+24)%24;while(t<anchor-12)t+=24;while(t>anchor+12)t-=24;return t;}
+function editSleep(ep){editingEp=ep;renderAgenda();}
+function cancelSleep(){editingEp=null;renderAgenda();}
+function resetSleep(ep){delete overrides[ep];editingEp=null;renderAgenda();}
+function applySleep(ep){
+  const bt=document.getElementById('slBed').value, wt=document.getElementById('slWake').value;
+  if(!bt||!wt){alert('Isi jam tidur & jam bangun aktual.');return;}
+  const a=EP_T[ep]||{start:0,end:8};
+  let s=nearestT(parseTime(bt),a.start);
+  let e=nearestT(parseTime(wt),a.end);
+  if(e<=s)e+=24;
+  overrides[ep]={start:Math.max(0,s),end:Math.min(e,RUN.ground)};
+  editingEp=null;renderAgenda();
+}
+
+function renderAgenda(){
+  const R=RUN;const destDate=t=>new Date(R.arrivalUTC+R.tzD*3600000+t*3600000);
+  const {ev,bodyAtZero}=buildAgenda(R,overrides);
+
+  // map episode -> its current start/end t (for edit prefill & anchoring)
+  EP_T={};
+  ev.forEach(e=>{if(e.type==='sleep'&&e.ep!=null)EP_T[e.ep]={start:e.t,end:e.t+(e.dur||8)};});
+
+  // merge planned activities
+  const skipped=[];
+  activities.forEach(act=>{
+    const [ay,am,adx]=act.date.split('-').map(Number);
+    const aUTC=Date.UTC(ay,am-1,adx,0,0,0)+(act.time-R.tzD)*3600000;
+    const t=(aUTC-R.arrivalUTC)/3600000;
+    if(t<-0.01||t>R.ground+0.01){skipped.push(act);return;}
+    const a=alertness(bodyAtZero+t);
+    const isMeal=/makan|sarapan|lunch|dinner|breakfast|brunch|cafe|kopi|coffee|resto/i.test(act.remark);
+    if(isMeal)for(let i=ev.length-1;i>=0;i--){if(ev[i].type==='meal'&&!ev[i].plan&&Math.abs(ev[i].t-t)<2.5)ev.splice(i,1);}
+    let note='';
+    const se=ev.find(e=>e.type==='sleep'&&t>=e.t-0.01&&t<=e.t+(e.dur||8)+0.01);
+    if(se)note=' <span class="warn">⚠ Bentrok jam tidur — geser tidur atau ambil nap pengganti.</span>';
+    else if(a<0.40)note=' <span class="warn">⚠ Jam tubuh lagi loyo — kurangi intensitas, siapkan kafein & ekstra hati-hati.</span>';
+    ev.push({t,type:'plan',ic:'📍',ti:act.remark,de:'Rencanamu.'+note,plan:true});
+  });
+
+  const ORD={land:0,wake:1,avoid:2,light:2,meal:3,plan:3,caf:4,wind:5,prep:6,sleep:7,depart:9};
+  ev.sort((a,b)=>(a.t-b.t)||((ORD[a.type]||5)-(ORD[b.type]||5)));
+
+  let html='<div class="adjhint">Tekan <b>Sesuaikan</b> di blok tidur untuk memasukkan jam tidur aktual — semua jadwal setelahnya dihitung ulang otomatis.</div>';
+  let lastKey=null;
+  ev.forEach(e=>{
+    const d=destDate(e.t);const key=d.getUTCFullYear()+'-'+d.getUTCMonth()+'-'+d.getUTCDate();
+    if(key!==lastKey){html+='<div class="daydiv">'+DAYS[d.getUTCDay()]+', '+d.getUTCDate()+' '+MONS[d.getUTCMonth()]+'</div>';lastKey=key;}
+    const lt=pad(d.getUTCHours())+':'+pad(d.getUTCMinutes());
+    const bh=bodyAtZero+e.t;const cc=condColor(alertness(bh));
+    let extra='';
+    if(e.type==='sleep'&&e.ep!=null){
+      if(editingEp===e.ep){
+        const bedV=pad(destDate(e.t).getUTCHours())+':'+pad(destDate(e.t).getUTCMinutes());
+        const wakeV=pad(destDate(e.t+(e.dur||8)).getUTCHours())+':'+pad(destDate(e.t+(e.dur||8)).getUTCMinutes());
+        extra='<div class="adjbox">'
+          +'<div class="adjrow"><label>Tidur jam</label><input type="time" id="slBed" value="'+bedV+'"><label>Bangun jam</label><input type="time" id="slWake" value="'+wakeV+'"></div>'
+          +'<div class="adjbtns"><button class="adj-apply" onclick="applySleep('+e.ep+')">Terapkan</button>'
+          +(e.actual?'<button class="adj-reset" onclick="resetSleep('+e.ep+')">Reset ke rencana</button>':'')
+          +'<button class="adj-cancel" onclick="cancelSleep()">Batal</button></div></div>';
+      } else {
+        extra='<button class="adj-btn" onclick="editSleep('+e.ep+')">'+(e.actual?'Ubah jam aktual':'Sesuaikan')+'</button>';
       }
     }
-    let note = '';
-    const sleepEv = events.find(e => e.type === 'sleep' && t >= e.t - 0.01 && t <= e.t + (e.dur || 8) + 0.01);
-    if (sleepEv) note = ' ⚠️ Bentrok jam tidur — geser tidurmu atau ambil nap pengganti sebelum/sesudah kegiatan ini.';
-    else if (a < 0.40 && act.type === 'sport') note = ' ⚠️ Tubuh lagi di titik terendah — perpanjang pemanasan, turunkan intensitas, jangan target PR.';
-    else if (a < 0.40) note = ' ⚠️ Tubuh lagi loyo di jam ini — siapkan kafein & ekstra hati-hati.';
-    addEv(t, 'plan', actIcon(act.type), `${act.label} (rencanamu)`, 'Jadwal tetap kamu.' + note, { plan: true });
+    html+='<div class="ev ev-'+e.type+(e.actual?' ev-actual':'')+'">'
+      +'<div class="ev-time"><b>'+lt+'</b><small>tubuh '+fmt(bh)+'</small></div>'
+      +'<div class="ev-rail"><span class="ev-dot" style="--c:'+cc.c+'"></span></div>'
+      +'<div class="ev-body"><div class="ev-card"><div class="ev-head"><span class="ev-ic">'+e.ic+'</span><span class="ev-title">'+e.ti+'</span>'+(e.actual?'<span class="badge-act">aktual</span>':'')+'</div><div class="ev-desc">'+e.de+'</div>'+extra+'</div></div>'
+      +'</div>';
   });
-
-  // sort by time, then by a sensible order for same-time events
-  const ORD = { land:0, wake:1, light:2, meal:3, plan:3, caf:4, prep:5, sleep:6, depart:9 };
-  events.sort((a, b) => (a.t - b.t) || ((ORD[a.type]||5) - (ORD[b.type]||5)));
-
-  // render grouped by local day
-  let agendaHTML = '', lastDay = null;
-  events.forEach(e => {
-    const localAbs = localAtZero + e.t;
-    const day = Math.floor(localAbs / 24);
-    if (day !== lastDay) {
-      agendaHTML += `<div class="ag-day">Hari ${day + 1}</div>`;
-      lastDay = day;
-    }
-    const a = alertness(bodyAtZero + e.t);
-    const cc = condColor(a);
-    agendaHTML += `<div class="ag-item ag-${e.type}">
-        <div class="ag-time"><span class="ag-local">${fmt(localAbs)}</span><span class="ag-body">tubuh ${fmt(bodyAtZero + e.t)}</span></div>
-        <span class="ag-dot" style="background:${cc.c}" title="kondisi tubuh: ${cc.label}"></span>
-        <div class="ag-icon">${e.icon}</div>
-        <div class="ag-content"><div class="ag-title">${e.title}</div><div class="ag-desc">${e.desc}</div></div>
-      </div>`;
-  });
-  document.getElementById('agenda').innerHTML = agendaHTML;
-  if (skipped.length) {
-    document.getElementById('agenda').innerHTML +=
-      `<div class="ag-skip">⚠️ ${skipped.length} kegiatan di luar rentang layover (sebelum mendarat atau setelah terbang balik) tak ditampilkan: ` +
-      skipped.map(s => `${s.label} — Hari ${s.day+1} ${s.timeStr}`).join('; ') + '.</div>';
-  }
-
-  // ---------- Health notes ----------
-  const notes = [];
-  // WOCL note
-  notes.push({ icon:'⚠️', title:'Window of Circadian Low (WOCL)', desc:'Titik terendah tubuhmu ada di sekitar jam tubuh 03:00–05:00. Saat terbang balik, itu jatuh pada '+fmt(4 - 0 + delta)+' waktu tujuan / '+fmt(4)+' jam rumah — jaga ekstra fokus, ini rawan microsleep.' });
-  // Hydration
-  notes.push({ icon:'💧', title:'Hidrasi kabin', desc:'Kelembapan kabin ~10–20%. Target ~250 ml air tiap jam terbang; batasi kafein &amp; alkohol yang memperberat dehidrasi + ganggu tidur.' });
-  // Caffeine cutoff
-  const cafCut = shortStay ? (wake + delta + 8) : 14;
-  notes.push({ icon:'☕', title:'Batas kafein terakhir', desc:'Berhenti kafein ±8 jam sebelum jendela tidur utamamu (sekitar '+fmt(cafCut)+' lokal) supaya tidak merusak kualitas tidur.' });
-  // Movement
-  notes.push({ icon:'🏃', title:'Gerak & olahraga', desc: (load>=60)
-      ? 'Beban berat: tunda latihan intens 1–2 hari, cukup jalan/mobilitas ringan sampai tidur stabil.'
-      : 'Beban ringan–sedang: olahraga ringan di pagi lokal justru mempercepat adaptasi. Hindari latihan berat dekat jam tidur.' });
-  // Recovery at home
-  notes.push({ icon:'🔄', title:'Pemulihan setibanya di rumah', desc:'Butuh ~'+daysToAdjust.toFixed(1)+' hari untuk resync penuh setelah trip ini. Jadwalkan aktivitas berat/penting setelah jendela itu, bukan di hari pertama pulang.' });
-
-  document.getElementById('healthNotes').innerHTML = notes.map(n =>
-    `<div class="rec"><div class="ricon">${n.icon}</div><div class="rbody">
-       <div class="rtitle">${n.title}</div>
-       <div class="rdesc">${n.desc}</div></div></div>`).join('');
-
-  // reveal
-  document.getElementById('placeholder').style.display = 'none';
-  document.getElementById('results').classList.add('show');
-  document.getElementById('results').scrollIntoView({ behavior:'smooth', block:'start' });
+  if(skipped.length)html+='<div class="skip">⚠ '+skipped.length+' kegiatan di luar rentang layover tak ditampilkan: '+skipped.map(s=>s.remark+' ('+s.date+' '+s.timeStr+')').join('; ')+'.</div>';
+  document.getElementById('agenda').innerHTML=html;
 }
+
+/* ============ RUN ============ */
+function run(){
+  const tzO=getTz('origin'),tzD=getTz('dest');
+  if(tzO===null||tzD===null){alert('Lengkapi home base & kota tujuan dulu.');return;}
+  const origin=document.getElementById('origin').value||'Asal';
+  const dest=document.getElementById('dest').value||'Tujuan';
+  const depDate=document.getElementById('depDate').value||new Date().toISOString().slice(0,10);
+  const dep=parseTime(document.getElementById('depTime').value||'09:30');
+  const flight=(parseFloat(document.getElementById('flightH').value)||0)+(parseFloat(document.getElementById('flightM').value)||0)/60;
+  const ground=(parseFloat(document.getElementById('groundH').value)||0)+(parseFloat(document.getElementById('groundM').value)||0)/60;
+  const wr=document.getElementById('wakeTime').value;const wake=wr?parseTime(wr):7.0;
+
+  const delta=tzD-tzO,absDelta=Math.abs(delta),eastward=delta>0;
+  const rate=eastward?1.5:1.0,daysAdj=absDelta/rate;
+  const shortStay=ground<48||absDelta<=2;
+  const arriveLocal=dep+flight+delta;
+
+  // absolute UTC anchor for real calendar dates
+  const [dy,dm,dd]=depDate.split('-').map(Number);
+  const depBaseUTC=Date.UTC(dy,dm-1,dd,0,0,0);
+  const arrivalUTC=depBaseUTC+(dep-tzO)*3600000+flight*3600000;
+  const destDate=t=>new Date(arrivalUTC+tzD*3600000+t*3600000);
+
+  /* verdict */
+  let load=absDelta*8;if(eastward)load*=1.15;
+  if(ground/24<daysAdj)load+=(daysAdj-ground/24)*6;
+  if(dep>=22||dep<6)load+=6;load=Math.min(100,Math.round(load));
+  const v=document.getElementById('verdict');
+  document.getElementById('vScore').textContent=load;
+  let vc,vt;if(load<30){vc='good';vt='Ringan — tubuh cepat pulih';}else if(load<60){vc='mid';vt='Sedang — butuh strategi';}else{vc='bad';vt='Berat — prioritaskan recovery';}
+  v.className='verdict '+vc;document.getElementById('vMain').textContent=vt;
+
+  /* stats */
+  const dtag=eastward?'<span class="tag e">timur</span>':'<span class="tag w">barat</span>';
+  const localAtZero=((arriveLocal%24)+24)%24;
+  const stats=[
+    {l:'Selisih zona',v:(delta>=0?'+':'')+delta,u:' jam '+dtag,n:eastward?'arah maju (berat)':'arah mundur (ringan)'},
+    {l:'Tiba di '+dest,v:fmt(localAtZero),u:' lokal',n:'jam tubuh '+fmt(localAtZero-delta)},
+    {l:'Lama layover',v:fmtDur(ground),u:'',n:(ground/24).toFixed(1)+' hari'},
+    {l:'Adaptasi penuh',v:daysAdj.toFixed(1),u:' hari',n:'~'+rate+' jam/hari'},
+  ];
+  document.getElementById('stats').innerHTML=stats.map(s=>'<div class="stat"><div class="sl">'+s.l+'</div><div class="sv">'+s.v+'<small>'+s.u+'</small></div><div class="sn">'+s.n+'</div></div>').join('');
+
+  /* ritme bar */
+  let bar='',leg={};
+  for(let h=0;h<24;h++){const a=alertness(h-delta);const cc=condColor(a);leg[cc.l]=cc.c;bar+='<div style="background:'+cc.c+'" title="'+fmt(h)+' lokal · '+cc.l+'"></div>';}
+  document.getElementById('rbar').innerHTML=bar;
+  document.getElementById('legend').innerHTML=Object.entries(leg).map(([l,c])=>'<span><i class="sw" style="background:'+c+'"></i>'+l+'</span>').join('');
+
+  /* strategy note */
+  document.getElementById('strat').innerHTML=shortStay
+    ? '<b>Strategi: jangkar ke jam rumah ('+origin+').</b> Layover pendek atau selisih kecil — lebih hemat menjaga ritme tetap di '+origin+' daripada memaksa adaptasi lalu balik lagi.'
+    : '<b>Strategi: geser ke jam lokal ('+dest+').</b> Layover panjang — sepadan menyesuaikan ritme ke '+dest+' supaya bisa berfungsi normal. Jam besar = lokal tujuan, angka kecil = jam tubuhmu.';
+
+  /* store state & render agenda (delegated so it can re-render on actual-sleep edits) */
+  RUN={tzO,tzD,origin,dest,depDate,dep,flight,ground,wake,delta,eastward,shortStay,arriveLocal,arrivalUTC,localAtZero};
+  overrides={}; editingEp=null;
+  renderAgenda();
+
+  /* health notes */
+  const wocl=fmt(4+delta);
+  const notes=[
+    {i:'🌫️',t:'WOCL — titik terloyo',d:'Sekitar jam tubuh 03:00–05:00 (≈ '+wocl+' waktu '+dest+'). Rawan microsleep saat duty; jangan jadwalkan tugas berat di jam ini.'},
+    {i:'💧',t:'Hidrasi kabin',d:'Kelembapan kabin ~10–20%. Sasar ~250 ml air tiap jam terbang; batasi alkohol & kafein berlebih yang memperparah dehidrasi.'},
+    {i:'🏃',t:'Olahraga',d:load>=60?'Beban berat: tunda latihan intens 1–2 hari; jalan/mobilitas ringan dulu sampai tidur stabil.':'Beban ringan–sedang: olahraga ringan di pagi lokal mempercepat adaptasi. Hindari latihan berat dekat jam tidur.'},
+    {i:'🔄',t:'Pemulihan di rumah',d:'Perlu ~'+daysAdj.toFixed(1)+' hari resync penuh setelah trip ini. Jadwalkan hal penting setelah jendela itu, bukan hari pertama pulang.'},
+  ];
+  document.getElementById('notes').innerHTML=notes.map(n=>'<div class="note"><div class="ni">'+n.i+'</div><div><b>'+n.t+'</b><p>'+n.d+'</p></div></div>').join('');
+
+  document.getElementById('empty').style.display='none';
+  document.getElementById('out').classList.add('show');
+  document.getElementById('out').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ============ init ============ */
+(function(){
+  const today=new Date().toISOString().slice(0,10);
+  document.getElementById('depDate').value=today;
+  document.getElementById('actDate').value=today;
+  resolveCity('origin');resolveCity('dest');
+})();
 </script>
 </body>
 </html>
